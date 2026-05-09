@@ -197,6 +197,67 @@ The degree to which agents participate upstream of coding: generating or refinin
 
 ---
 
+## Level–Criteria Mapping
+
+Minimum fulfillment levels required to attain each adoption level. A project must meet **all** minimum thresholds for a given level (and all lower levels) to be assigned that level. A dash (—) means the criterion is not required at that level.
+
+| Criterion | Level 0 | Level 1 | Level 2 | Level 3 | Level 4 |
+|-----------|---------|---------|---------|---------|---------|
+| A1 Agent Context Availability | — | 1 | 2 | 3 | 3 |
+| A2 Agent-Authored Contributions | — | 1 | 2 | 3 | 3 |
+| A3 Feedback Loop Closure | — | — | 2 | 2 | 3 |
+| A4 Task Scope | — | 1 | 2 | 3 | 3 |
+| A5 Workflow Integration | — | — | 1 | 3 | 3 |
+| A6 Autonomous Operation | — | — | — | 3 | 3 |
+| A7 Proactive Quality Management | — | — | — | — | 3 |
+| A8 Planning Integration | — | — | — | — | 2 |
+
+### Rationale
+
+**Level 0** has no requirements. Any project not meeting Level 1 thresholds falls here by default.
+
+**Level 1 — Vibe Coding** requires the minimum behavioral signals that distinguish habitual agent use from occasional chatbot queries:
+
+- **A1 ≥ 1**: A basic README or project description is the minimum for meaningful agent assistance. Without any project context, agent suggestions are purely generic — indistinguishable from a general-purpose chatbot rather than a project-integrated tool.
+- **A2 ≥ 1**: Agent-authored contributions in git history (even occasional, fewer than 25% of changes) are the core behavioral signal of vibe coding. Explanation and Q&A alone, with no agent-written code merged, does not constitute Level 1.
+- **A4 ≥ 1**: Agents must be making bounded code changes (a function, a bug fix, a single-file edit). Agents that only answer questions and never touch the codebase do not qualify.
+
+A3, A5, A6, A7, and A8 are not required at Level 1 because developers direct agents step-by-step, close all feedback loops manually, and handle all workflow handoffs themselves.
+
+**Level 2 — Agentic Engineering** requires enough context, contribution depth, and self-verification for agents to own complete feature implementation:
+
+- **A1 ≥ 2**: CLAUDE.md or AGENTS.md with project-specific guidance is essential for agents to plan multi-file implementations without human narration. Conventions, architecture overview, and key commands let the agent operate autonomously within the project context. A bare README (A1 = 1) does not provide enough for independent judgment.
+- **A2 ≥ 2**: Regular agent contributions (25–75% of recent changes) reflect that agent use has become the default for most implementation work, not a sporadic experiment.
+- **A3 ≥ 2**: The ability to run the full test suite, iterate on failures, and present only passing results is the defining behavioral difference between Level 1 and Level 2. At Level 1, the human closes the feedback loop; at Level 2, the agent does. Without self-verification, "assigning a story" is just a longer prompt.
+- **A4 ≥ 2**: Complete feature implementation spanning multiple files is the minimum task scope for Agentic Engineering. Bounded single-file edits (A4 = 1) are Level 1 behavior regardless of how often they occur.
+- **A5 ≥ 1**: Agents assist with the full task scope even if humans still handle handoffs. This minimum ensures agents are integrated into the development workflow — not just used in isolation — without requiring autonomous PR creation.
+
+A6, A7, and A8 are not required at Level 2 because agents are still manually initiated per task, proactive quality work is not expected, and planning integration is not yet part of the workflow.
+
+**Level 3 — Software Factory** requires the infrastructure for continuous, parallel, low-touch agent delivery:
+
+- **A1 ≥ 3**: Comprehensive agent context — including architecture docs structured for agent consumption AND MCP servers exposing requirements and runbooks — is necessary for agents to pull stories from the backlog and implement them without per-story human briefing. A static CLAUDE.md (A1 = 2) is insufficient when agents must independently understand requirements and navigate the full system.
+- **A2 ≥ 3**: Autonomous PR creation and more than 75% agent involvement in implementation reflects that the team operates as a factory, not as individual developers who sometimes delegate. Agent throughput must be a primary delivery metric alongside human throughput.
+- **A3 ≥ 2**: Agents must present only passing results to human reviewers. At factory scale, passing unverified work to human reviewers creates unacceptable review burden. (Full CI and production verification — A3 = 3 — is deferred to Level 4 because post-deployment verification is a distinct capability from pre-review verification.)
+- **A4 ≥ 3**: Full user story implementation end-to-end — including cross-service changes, test suites, documentation, and migration scripts — is required. Partial feature implementation (A4 = 2) still requires significant human completion work and is Level 2 behavior.
+- **A5 ≥ 3**: Full workflow embedding — creating PRs, posting review comments, monitoring CI, triggering and observing deployments — is what makes the factory pattern work at scale without per-task human coordination. Partial workflow integration (A5 = 1 or 2) still requires humans to close too many handoff loops.
+- **A6 ≥ 3**: A continuous pipeline pulling from the backlog on a schedule is the defining characteristic of Level 3. Without this, each story still requires a human to initiate it — which is Level 2, regardless of how capable the agent is once started.
+
+A7 and A8 are not required at Level 3 because proactive quality management and planning integration represent a separate dimension of autonomy (long-term codebase health and upstream participation) that is not part of the core delivery factory pattern.
+
+**Level 4 — Sustainable Autonomy** adds the proactive and planning dimensions that make the system self-sustaining over time:
+
+- **A1 ≥ 3**: Full context remains necessary (same as Level 3); proactive quality agents must understand the system deeply to identify and remediate tech debt and security issues without being prompted.
+- **A2 ≥ 3**: Same as Level 3; agents remain the primary implementers, now also for proactive quality work.
+- **A3 ≥ 3**: Level 4 agents verify post-deployment behavior and respond to production incidents. This requires access to CI pipeline results, production monitoring, and MCP-connected tool outputs — not just the local test suite. Without this, automated remediation of production issues is impossible.
+- **A4 ≥ 3**: Same as Level 3; story-level implementation scope is required for proactive quality PRs and autonomous planning contributions.
+- **A5 ≥ 3**: Same as Level 3; full workflow embedding is required for proactive PRs to flow through review, CI, and deployment without human coordination.
+- **A6 ≥ 3**: Same as Level 3; continuous autonomous operation is the foundation on which proactive and planning behaviors run.
+- **A7 ≥ 3**: Proactive PR creation for tech debt reduction, dependency updates, and security remediations — without human initiation — is the defining characteristic of Level 4. Without this, the team must still manually schedule all quality work, and the system degrades over time regardless of delivery throughput.
+- **A8 ≥ 2**: Agents participate in story generation or decomposition as a configured step in the planning workflow. Level 4's typical state includes requirements generation and story decomposition; full autonomous planning (A8 = 3) is a stretch goal, but structured participation in planning (A8 = 2) is required to reduce the manual overhead of feeding the factory.
+
+---
+
 ## Notes and Assumptions
 
 - **Independence from readiness**: A team can adopt agents aggressively on a low-readiness project, but the results will be unpredictable. High adoption on a high-readiness project is the target state.
