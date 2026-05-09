@@ -1,4 +1,3 @@
-- create a quiz that allows users to evaluate their projects based on the agent readiness and adoption models
 - for each readiness criteria, create a skill that can be used by an agent to verify the level of fulfillment of the criteria in a project
 - for each adoption criteria, create a skill that can be used by an agent to verify the level of fulfillment of the criteria in a project
 - create a skill that automatically determines the readiness level of a project based on the fulfillment levels of the criteria (using the previous skills) and produces a report
