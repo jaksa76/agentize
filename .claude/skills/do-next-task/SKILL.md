@@ -1,7 +1,6 @@
 ---
 name: do-next-task
 description: Pick the top task from TODO.md, implement it fully, commit and push to git, then mark it complete. Use when you want to work on the next item in the project task list.
-disable-model-invocation: true
 allowed-tools: Read Write Edit Bash
 ---
 
