@@ -1,4 +1,3 @@
-- create a skill that automatically determines the adoption level of a project based on the fulfillment levels of the criteria (using the previous skills) and produces a report
 - for each readiness criteria, create a skill that can be used by an agent to automatically improve the fulfillment level of the criteria in a project (if possible)
 - for each adoption criteria, create a skill that can be used by an agent to automatically improve the fulfillment level of the criteria in a project (if possible)
 - create a skill that automatically improves the readiness level of a project based on the fulfillment levels of the criteria (using the previous skills)
