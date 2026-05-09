@@ -1,4 +1,3 @@
-- first draft of agent readiness model (levels and criteria). Use the VISION.md file as a starting point, but adapt and expand as needed
 - for each criteria, if possible determine multiple levels of fulfillment (some criteria are binary, some are more continuous)
 - for each agent readiness level, determine the required criteria fullfillment levels
 - review the agentic readiness model and adapt if there are any inconsistencies or gaps
