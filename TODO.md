@@ -1,0 +1,21 @@
+- first draft of agent readiness model (levels and criteria). Use the VISION.md file as a starting point, but adapt and expand as needed
+- for each criteria, if possible determine multiple levels of fulfillment (some criteria are binary, some are more continuous)
+- for each agent readiness level, determine the required criteria fullfillment levels
+- review the agentic readiness model and adapt if there are any inconsistencies or gaps
+- first draft of agent adoption model (levels and criteria)
+- for each criteria, if possible determine multiple levels of fulfillment (some criteria are binary, some are more continuous)
+- for each agent adoption level, determine the required criteria fullfillment levels
+- review and adapt the readiness levels in light of the adoption levels
+- review the agent adoption model and adapt if there are any inconsistencies or gaps
+- create a quiz that allows users to evaluate their projects based on the agent readiness and adoption models
+- for each readiness criteria, create a skill that can be used by an agent to verify the level of fulfillment of the criteria in a project
+- for each adoption criteria, create a skill that can be used by an agent to verify the level of fulfillment of the criteria in a project
+- create a skill that automatically determines the readiness level of a project based on the fulfillment levels of the criteria (using the previous skills) and produces a report
+- create a skill that automatically determines the adoption level of a project based on the fulfillment levels of the criteria (using the previous skills) and produces a report
+- for each readiness criteria, create a skill that can be used by an agent to automatically improve the fulfillment level of the criteria in a project (if possible)
+- for each adoption criteria, create a skill that can be used by an agent to automatically improve the fulfillment level of the criteria in a project (if possible)
+- create a skill that automatically improves the readiness level of a project based on the fulfillment levels of the criteria (using the previous skills)
+- create a skill that automatically improves the adoption level of a project based on the fulfillment levels of the criteria (using the previous skills)
+- create a README.md file in the repository that explains the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
+- create a blog post about the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
+- create a linkedin post about the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
