@@ -167,13 +167,13 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 | C1.1 Codebase accessibility | — | 1 | 2 | 2 |
 | C2.1 Setup automation | — | 1 | 2 | 3 |
 | C3.1 Architecture depth | — | — | 1 | 3 |
-| C4.1 Requirements access | — | — | 1 | 2 |
+| C4.1 Requirements access | — | — | 1 | 3 |
 | C5.1 Runnability | — | 1 | 2 | 2 |
 | C5.2 Unit test coverage | — | 1 | 2 | 3 |
 | C5.3 Integration and E2E coverage | — | — | 1 | 2 |
 | C6.1 Static analysis | — | — | 1 | 2 |
 | C7.1 Test isolation | — | — | — | 2 |
-| C8.1 CI/CD automation | — | — | 1 | 2 |
+| C8.1 CI/CD automation | — | — | 1 | 3 |
 | C8.2 Observability | — | — | — | 2 |
 
 ### Rationale
@@ -207,12 +207,12 @@ Data isolation and full observability are not required at Level 2 because a huma
 
 - **C2.1 ≥ 3**: A containerised or fully-declarative environment (devcontainer, Nix, etc.) ensures the agent always operates in a perfectly reproducible state, eliminating environment drift as a failure mode.
 - **C3.1 ≥ 3**: Component-level architecture documentation, including critical flows, is required so the agent understands not just service boundaries but the internal structure and behaviour of each component. Without this depth, autonomous implementation risks introducing subtle bugs in component internals or breaking undocumented cross-component invariants.
-- **C4.1 ≥ 2**: Acceptance criteria or user stories give the agent a precise definition of done rather than an open-ended product vision.
+- **C4.1 ≥ 3**: Programmatic access to requirements via MCP server or API is required at this level because agents must pull and interpret stories independently, without a human mediating between the backlog and the agent. A developer can navigate a wiki or a ticket board; an agent operating autonomously at scale cannot do so reliably without a structured interface. C4.1 ≥ 2 (accessible user stories) is sufficient when a human briefs the agent per story; C4.1 ≥ 3 is required when the agent must access requirements on its own.
 - **C5.2 ≥ 3**: ≥80% unit-test coverage means regressions are very likely to be caught automatically rather than by a human reviewer.
 - **C5.3 ≥ 2**: End-to-end tests covering critical flows provide a system-level correctness signal. Without E2E coverage, the agent may introduce integration bugs invisible to unit tests.
 - **C6.1 ≥ 2**: Type checking (in addition to linting) catches a class of semantic errors that linting cannot, providing higher-confidence feedback before human review.
 - **C7.1 ≥ 2**: Reproducible database state and vendor sandbox environments allow the agent to test data-path changes safely and consistently.
-- **C8.1 ≥ 2**: The agent must be able to trigger pipeline runs to verify its changes in CI without waiting for a human to start the job.
+- **C8.1 ≥ 3**: Full pipeline control including deployment is required at this level. Supervised Autonomy means agents complete the delivery cycle independently — implement, verify in CI, deploy, and observe the result — with humans providing oversight rather than per-step direction. Without deployment control (C8.1 = 2), agents can trigger CI runs but must hand off to a human to deploy, breaking the end-to-end autonomy that Level 3 describes.
 - **C8.2 ≥ 2**: Queryable monitoring and logs (structured queries, not just raw tailing) allow the agent to actively interrogate post-deployment behaviour — filtering by time window, service, or error type — rather than manually scanning raw output. At Level 3, agents must verify their own deployments without a human reading logs on their behalf.
 
 C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guide is already required at Level 2 and there is no higher fulfillment level for this criterion.
@@ -223,4 +223,5 @@ C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guid
 
 - **Applicability**: Not all criteria apply to every project type. C5.3 level 3 (UI visual regression) and C7.1 may be omitted for projects without a frontend or external dependencies, and their omission does not reduce the level.
 - **Human in the loop**: Even at Level 3, humans remain in the loop. The model describes the degree of autonomy that is *possible*, not the degree that is *required* or *safe* in any given context.
+- **Relationship to adoption**: Readiness describes structural project properties; adoption describes how agents are actually used. As a rough guide: Adoption Level 1 (Vibe Coding) is viable from Readiness Level 1; Adoption Level 2 (Agentic Engineering) benefits strongly from Readiness Level 2; Adoption Levels 3 and 4 (Software Factory, Sustainable Autonomy) effectively require Readiness Level 3. See ADOPTION.md for the complementary model.
 - **Model evolution**: This is a living document. As the practice of agentic coding matures, the criteria and thresholds will be revised.
