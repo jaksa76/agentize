@@ -48,7 +48,7 @@ Humans guide agents at the story or feature level rather than step by step. Agen
 - Requirements are accessible within the repository or via tooling
 - Meaningful unit test coverage (>50%) provides reliable feedback
 - Integration tests cover key service boundaries
-- Linting and type-checking are automated and provide immediate feedback
+- Linting and/or formatting is automated and provides immediate feedback
 - Agents can run the full test suite locally
 
 ---
@@ -59,12 +59,12 @@ Humans operate at a strategic level: defining goals, reviewing outcomes, and han
 
 **Typical state:**
 - Fully reproducible development environment (devcontainer, Nix, or equivalent)
-- Comprehensive architecture documentation from system context down to component level
+- Comprehensive architecture documentation from system context down to component level, including critical flows
 - High unit test coverage (>80%) plus integration and end-to-end tests
 - UI tests with screenshot diffing or visual regression (if a UI is present)
 - Reproducible database state (seed scripts, migrations, test fixtures)
 - Automated deployment pipeline; agents can trigger and verify deployments
-- Requirements management tool is accessible to agents (via MCP server or API)
+- User stories and acceptance criteria are documented and accessible in the repository or connected tooling
 - Monitoring and logs are queryable, enabling agents to verify production behaviour
 
 ---
@@ -166,7 +166,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 |-----------|---------|---------|---------|---------|
 | C1.1 Codebase accessibility | — | 1 | 2 | 2 |
 | C2.1 Setup automation | — | 1 | 2 | 3 |
-| C3.1 Architecture depth | — | — | 1 | 2 |
+| C3.1 Architecture depth | — | — | 1 | 3 |
 | C4.1 Requirements access | — | — | 1 | 2 |
 | C5.1 Runnability | — | 1 | 2 | 2 |
 | C5.2 Unit test coverage | — | 1 | 2 | 3 |
@@ -174,7 +174,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 | C6.1 Static analysis | — | — | 1 | 2 |
 | C7.1 Test isolation | — | — | — | 2 |
 | C8.1 CI/CD automation | — | — | 1 | 2 |
-| C8.2 Observability | — | — | — | 1 |
+| C8.2 Observability | — | — | — | 2 |
 
 ### Rationale
 
@@ -206,14 +206,14 @@ Data isolation and full observability are not required at Level 2 because a huma
 **Level 3 — Supervised Autonomy** requires comprehensive feedback and full environmental control so agents can execute end-to-end without per-step human intervention:
 
 - **C2.1 ≥ 3**: A containerised or fully-declarative environment (devcontainer, Nix, etc.) ensures the agent always operates in a perfectly reproducible state, eliminating environment drift as a failure mode.
-- **C3.1 ≥ 2**: Container/service-level architecture documentation allows the agent to understand boundaries, data flows, and blast radius before making changes.
+- **C3.1 ≥ 3**: Component-level architecture documentation, including critical flows, is required so the agent understands not just service boundaries but the internal structure and behaviour of each component. Without this depth, autonomous implementation risks introducing subtle bugs in component internals or breaking undocumented cross-component invariants.
 - **C4.1 ≥ 2**: Acceptance criteria or user stories give the agent a precise definition of done rather than an open-ended product vision.
 - **C5.2 ≥ 3**: ≥80% unit-test coverage means regressions are very likely to be caught automatically rather than by a human reviewer.
 - **C5.3 ≥ 2**: End-to-end tests covering critical flows provide a system-level correctness signal. Without E2E coverage, the agent may introduce integration bugs invisible to unit tests.
 - **C6.1 ≥ 2**: Type checking (in addition to linting) catches a class of semantic errors that linting cannot, providing higher-confidence feedback before human review.
 - **C7.1 ≥ 2**: Reproducible database state and vendor sandbox environments allow the agent to test data-path changes safely and consistently.
 - **C8.1 ≥ 2**: The agent must be able to trigger pipeline runs to verify its changes in CI without waiting for a human to start the job.
-- **C8.2 ≥ 1**: Read-only log and metrics access allows the agent to verify post-deployment behaviour and detect regressions in production-like environments.
+- **C8.2 ≥ 2**: Queryable monitoring and logs (structured queries, not just raw tailing) allow the agent to actively interrogate post-deployment behaviour — filtering by time window, service, or error type — rather than manually scanning raw output. At Level 3, agents must verify their own deployments without a human reading logs on their behalf.
 
 C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guide is already required at Level 2 and there is no higher fulfillment level for this criterion.
 
