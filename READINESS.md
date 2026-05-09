@@ -158,23 +158,64 @@ The degree to which an agent can deploy, monitor, and verify changes in producti
 
 ---
 
-## Level–Criteria Mapping (Preliminary)
+## Level–Criteria Mapping
 
-Minimum fulfillment levels required to reach each readiness level.
+Minimum fulfillment levels required to attain each readiness level. A project must meet **all** minimum thresholds for a given level (and all lower levels) to be assigned that level. A dash (—) means the criterion is not required at that level.
 
-| Criterion | Level 1 | Level 2 | Level 3 |
-|-----------|---------|---------|---------|
-| C1.1 Codebase accessibility | 1 | 2 | 2 |
-| C2.1 Setup automation | 1 | 2 | 3 |
-| C3.1 Architecture depth | — | 1 | 2 |
-| C4.1 Requirements access | — | 1 | 2 |
-| C5.1 Runnability | 1 | 2 | 2 |
-| C5.2 Unit test coverage | 1 | 2 | 3 |
-| C5.3 Integration and E2E coverage | — | 1 | 2 |
-| C6.1 Static analysis | — | 1 | 2 |
-| C7.1 Test isolation | — | — | 2 |
-| C8.1 CI/CD automation | — | 1 | 2 |
-| C8.2 Observability | — | — | 1 |
+| Criterion | Level 0 | Level 1 | Level 2 | Level 3 |
+|-----------|---------|---------|---------|---------|
+| C1.1 Codebase accessibility | — | 1 | 2 | 2 |
+| C2.1 Setup automation | — | 1 | 2 | 3 |
+| C3.1 Architecture depth | — | — | 1 | 2 |
+| C4.1 Requirements access | — | — | 1 | 2 |
+| C5.1 Runnability | — | 1 | 2 | 2 |
+| C5.2 Unit test coverage | — | 1 | 2 | 3 |
+| C5.3 Integration and E2E coverage | — | — | 1 | 2 |
+| C6.1 Static analysis | — | — | 1 | 2 |
+| C7.1 Test isolation | — | — | — | 2 |
+| C8.1 CI/CD automation | — | — | 1 | 2 |
+| C8.2 Observability | — | — | — | 1 |
+
+### Rationale
+
+**Level 0** has no requirements. Any project not meeting Level 1 thresholds falls here.
+
+**Level 1 — Foundation** requires the minimum viable set for an agent to take any useful action at all:
+
+- **C1.1 ≥ 1**: An agent must be able to find and navigate the codebase. A single root with a README is the absolute minimum — without it, the agent cannot orient itself.
+- **C2.1 ≥ 1**: Written setup instructions allow a human to verify the environment; the agent still needs human help, but the instructions exist as a reference. Zero instructions means even a human cannot reliably reproduce the environment, so agents have no chance.
+- **C5.1 ≥ 1**: The project must build. Compilation errors are the most fundamental feedback loop — without them, every agent change may silently break the build.
+- **C5.2 ≥ 1**: At least some unit tests must exist to give the agent a basic correctness signal. Zero tests means the agent gets no feedback beyond "it compiled."
+
+Architecture docs, requirements, integration tests, static analysis, CI/CD, and observability are not required at Level 1 because a human micromanages each step and can provide this context manually.
+
+**Level 2 — Guided Autonomy** requires enough context and feedback for an agent to plan and execute multi-step tasks independently:
+
+- **C1.1 ≥ 2**: A comprehensive entry-point guide (CLAUDE.md or equivalent) is needed so the agent can navigate conventions and understand the codebase structure without human narration.
+- **C2.1 ≥ 2**: A single-script setup removes the need for a human to walk through instructions, enabling the agent to reset its environment reliably.
+- **C3.1 ≥ 1**: The agent needs at least a system-context view (users, external systems, high-level purpose) to plan implementations sensibly.
+- **C4.1 ≥ 1**: The agent must be able to read the product vision and goals to understand *why* the system exists and make appropriate trade-offs.
+- **C5.1 ≥ 2**: The app must be runnable locally or in an ephemeral environment so the agent can verify functional behaviour, not just compilation.
+- **C5.2 ≥ 2**: At least 50% unit-test coverage provides a meaningful regression signal. Below this threshold the agent cannot reliably detect regressions in areas it has not directly touched.
+- **C5.3 ≥ 1**: Integration tests covering key boundaries prevent the agent from breaking service contracts while making changes that appear locally correct.
+- **C6.1 ≥ 1**: Linting and formatting automation gives the agent immediate, actionable style feedback, reducing review churn and keeping the codebase consistent.
+- **C8.1 ≥ 1**: Read-only pipeline access lets the agent observe whether its changes pass CI, closing a critical feedback loop without requiring human status updates.
+
+Data isolation and full observability are not required at Level 2 because a human still oversees outcomes and can flag production-visible issues.
+
+**Level 3 — Supervised Autonomy** requires comprehensive feedback and full environmental control so agents can execute end-to-end without per-step human intervention:
+
+- **C2.1 ≥ 3**: A containerised or fully-declarative environment (devcontainer, Nix, etc.) ensures the agent always operates in a perfectly reproducible state, eliminating environment drift as a failure mode.
+- **C3.1 ≥ 2**: Container/service-level architecture documentation allows the agent to understand boundaries, data flows, and blast radius before making changes.
+- **C4.1 ≥ 2**: Acceptance criteria or user stories give the agent a precise definition of done rather than an open-ended product vision.
+- **C5.2 ≥ 3**: ≥80% unit-test coverage means regressions are very likely to be caught automatically rather than by a human reviewer.
+- **C5.3 ≥ 2**: End-to-end tests covering critical flows provide a system-level correctness signal. Without E2E coverage, the agent may introduce integration bugs invisible to unit tests.
+- **C6.1 ≥ 2**: Type checking (in addition to linting) catches a class of semantic errors that linting cannot, providing higher-confidence feedback before human review.
+- **C7.1 ≥ 2**: Reproducible database state and vendor sandbox environments allow the agent to test data-path changes safely and consistently.
+- **C8.1 ≥ 2**: The agent must be able to trigger pipeline runs to verify its changes in CI without waiting for a human to start the job.
+- **C8.2 ≥ 1**: Read-only log and metrics access allows the agent to verify post-deployment behaviour and detect regressions in production-like environments.
+
+C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guide is already required at Level 2 and there is no higher fulfillment level for this criterion.
 
 ---
 
