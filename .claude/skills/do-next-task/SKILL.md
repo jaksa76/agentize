@@ -17,6 +17,8 @@ The top task in TODO.md is:
 
 ## Instructions
 
+Use a subagent to implement the task. Follow the steps outlined in the "Follow these steps exactly" section below.
+
 Follow these steps exactly:
 
 1. **Read the top task** — it is shown above. Understand what needs to be done.
@@ -26,22 +28,12 @@ Follow these steps exactly:
 
 3. **Implement the task fully** — do not cut corners. Make all necessary file changes.
 
-4. **Ensure git is initialized** — if the working directory is not a git repo, run `git init && git add -A && git commit -m "initial commit"` first.
+4. **Mark the task complete** in TODO.md — remove the first line (the task you just completed) from TODO.md. Do not add it back as "done"; just delete it so the next task becomes the new top.
 
 5. **Stage and commit the implementation**:
-   - Stage only the files changed for this task (not TODO.md yet).
-   - Write a commit message that describes what was done, ending with:
-     `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`
+   - Stage only the files changed for this task (including the TODO.md).
+   - Write a concise commit message that describes what was done.
 
 6. **Push to remote** — run `git push`. If no remote is configured, skip this step and note it.
 
-7. **Mark the task complete** in TODO.md — remove the first line (the task you just completed) from TODO.md. Do not add it back as "done"; just delete it so the next task becomes the new top.
-
-8. **Commit the TODO.md update**:
-   ```
-   git add TODO.md
-   git commit -m "mark task complete: <short task description>"
-   ```
-   Then push: `git push` (skip if no remote).
-
-9. **Report** what was implemented and which files were changed.
+7. **Report** what was implemented and which files were changed.
