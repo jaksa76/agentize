@@ -1,4 +1,3 @@
-- for each adoption criteria, create a skill that can be used by an agent to automatically improve the fulfillment level of the criteria in a project (if possible)
 - create a skill that automatically improves the readiness level of a project based on the fulfillment levels of the criteria (using the previous skills)
 - create a skill that automatically improves the adoption level of a project based on the fulfillment levels of the criteria (using the previous skills)
 - create a README.md file in the repository that explains the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them

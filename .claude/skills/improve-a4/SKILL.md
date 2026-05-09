@@ -1,0 +1,135 @@
+---
+name: improve-a4
+description: Improve adoption criterion A4 (Task Scope) by creating skills and guidance that enable agents to handle progressively larger tasks. Raises the fulfillment level by one step.
+allowed-tools: Bash Read Write Edit
+---
+
+# Improve A4 — Task Scope
+
+## Current State
+
+### Existing skills
+!`ls .claude/skills/ 2>/dev/null || echo "(no skills directory)"`
+!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | head -20 || echo "(no skills)"`
+!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h "^description:" 2>/dev/null | head -20 || echo "(no skill descriptions)"`
+
+### CLAUDE.md task scope guidance
+!`grep -i "story\|feature\|task\|scope\|multi-file\|implement\|function\|file" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no task scope guidance)"`
+
+### Backlog / task list
+!`head -15 TODO.md 2>/dev/null || head -15 BACKLOG.md 2>/dev/null || echo "(no task list)"`
+
+### Project structure (to understand feasible task scope)
+!`ls -la`
+!`ls src/ lib/ app/ services/ packages/ 2>/dev/null | head -20 || echo "(no standard source dirs)"`
+!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
+
+### Recent agent commits (scope assessment)
+!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -A2 "co-authored-by\|claude\|copilot" | head -20 || echo "(no agent commits)"`
+
+## Instructions
+
+**Step 1 — Determine current level:**
+- Level 0: No agent code changes; agents only answer questions
+- Level 1: Agent commits are 1–2 files; single-function or bug-fix scope
+- Level 2: Agent commits span 3+ files including tests; feature-level scope
+- Level 3: Agent commits span services/packages; story-level scope with migrations and docs
+
+**Step 2 — Implement the improvement:**
+
+**If current level is 0 → raise to 1:**
+Agents aren't making changes yet. Create the infrastructure for bounded contributions:
+
+1. Create `.claude/skills/fix-bug/SKILL.md` — a skill for agents to fix a specific bug:
+```markdown
+---
+name: fix-bug
+description: Fix a specific bug described by the user. Makes targeted changes to the minimum number of files needed.
+allowed-tools: Bash Read Write Edit
+---
+
+# Fix Bug
+
+## Context
+!`git status`
+!`git log --oneline -5`
+
+## Instructions
+1. Read the bug description from the user's prompt carefully.
+2. Locate the relevant code using Read and Bash (grep/find).
+3. Understand the root cause before making any changes.
+4. Make the minimal targeted change to fix the bug.
+5. Run the test suite: `[test command from CLAUDE.md]`
+6. If tests fail, fix them or adjust your approach.
+7. Report: what was changed, why, and how to verify the fix.
+```
+
+2. Update CLAUDE.md to encourage using agents for bug fixes and small tasks.
+
+**If current level is 1 → raise to 2:**
+Agents are making small changes. Create a feature implementation skill for multi-file work:
+
+Create `.claude/skills/implement-feature/SKILL.md`:
+```markdown
+---
+name: implement-feature
+description: Implement a complete feature spanning multiple files. Includes writing tests and running the full suite before completing.
+allowed-tools: Bash Read Write Edit
+---
+
+# Implement Feature
+
+## Project Context
+!`cat CLAUDE.md 2>/dev/null | head -60 || echo "(no CLAUDE.md)"`
+!`ls src/ lib/ app/ 2>/dev/null | head -20`
+
+## Instructions
+1. Read the feature description carefully.
+2. Read CLAUDE.md for conventions and key commands.
+3. Plan the implementation: identify which files to create/modify.
+4. Read existing code in the affected areas before making changes.
+5. Implement the feature across all necessary files.
+6. Write tests for the new functionality (unit + integration if applicable).
+7. Run: build → lint → tests. Fix any failures.
+8. Report: files changed, tests added, how to verify.
+```
+
+Also update CLAUDE.md to state that feature-level tasks should be assigned to agents as a whole.
+
+**If current level is 2 → raise to 3:**
+Agents implement features. Elevate to story-level scope:
+
+Create or update `.claude/skills/implement-story/SKILL.md` (similar to do-next-task) for end-to-end story implementation:
+```markdown
+---
+name: implement-story
+description: Implement a complete user story end-to-end, including all services, tests, documentation, and database migrations.
+allowed-tools: Bash Read Write Edit
+---
+
+# Implement Story
+
+## Project Context
+!`cat CLAUDE.md 2>/dev/null | head -80`
+!`ls -la`
+
+## Instructions
+1. Read the story description and acceptance criteria carefully.
+2. Read CLAUDE.md for conventions, architecture, and commands.
+3. Read VISION.md or relevant requirements docs.
+4. Read all files in the affected service(s) before implementing.
+5. Plan the full scope: API changes, DB migrations, frontend changes, tests, docs.
+6. Implement all changes across all services/packages.
+7. Write comprehensive tests: unit, integration, and E2E if applicable.
+8. Update relevant documentation.
+9. Run: build → lint → typecheck → tests. Fix any failures.
+10. Report: all files changed, tests added, acceptance criteria verified.
+```
+
+Also create a `TODO.md` (if absent) with story-level items to make the story-scope expectation concrete.
+
+**If already at level 3:**
+Report that A4 is already at its maximum level (3) and no improvement is needed.
+
+**Step 3 — Report:**
+State what skills were created or modified, what CLAUDE.md sections were added, the before and after level.
