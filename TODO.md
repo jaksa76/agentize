@@ -1,7 +1,7 @@
 - for each criteria, if possible determine multiple levels of fulfillment (some criteria are binary, some are more continuous)
 - for each agent readiness level, determine the required criteria fullfillment levels
 - review the agentic readiness model and adapt if there are any inconsistencies or gaps
-- first draft of agent adoption model (levels and criteria)
+- first draft of agent adoption model (levels and criteria).
 - for each criteria, if possible determine multiple levels of fulfillment (some criteria are binary, some are more continuous)
 - for each agent adoption level, determine the required criteria fullfillment levels
 - review and adapt the readiness levels in light of the adoption levels
