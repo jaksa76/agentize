@@ -26,7 +26,7 @@ Agents play no meaningful role in the team's development process. Development is
 Developers use agents as interactive assistants for individual coding tasks. Agents accelerate human work (autocomplete, code generation, explanation, debugging) but are directed step-by-step. The human remains the author; the agent is a smart tool.
 
 **Typical state:**
-- Most developers use an AI coding assistant regularly (completions, chat, inline edits)
+- Developers regularly use an AI coding assistant (completions, chat, inline edits); agent use may not yet be universal across the team
 - Agents are used for bounded tasks: writing a function, explaining an error, generating a test for a specific case
 - Humans review every line the agent produces before accepting it
 - No agent autonomously runs tools, executes tests, or makes multi-file changes
@@ -42,7 +42,7 @@ Agents can plan and implement complete features or user stories with the develop
 - Agents autonomously write, run, and fix tests as part of implementation
 - Agents operate across multiple files and exercise independent judgment about structure
 - Humans review completed work rather than each individual step
-- Agent use is the default, not the exception, for most implementation work
+- Agent use is habitual across the team and covers a substantial portion of implementation work
 
 ---
 
@@ -96,7 +96,7 @@ The degree to which agents are given sufficient project-specific context to act 
 
 The degree to which agents meaningfully contribute to the codebase, from occasional co-authored edits through to agents autonomously creating pull requests.
 
-**Evidence:** Co-authored commits in git history; PR descriptions indicating agent implementation; proportion of recent changes with agent involvement.
+**Evidence:** Co-authored commits in git history; PR descriptions indicating agent implementation; proportion of recent changes with agent involvement. "Recent" is defined as the last 90 days or last 50 commits, whichever covers more changes.
 
 | Level | Description |
 |-------|-------------|
@@ -260,7 +260,9 @@ A7 and A8 are not required at Level 3 because proactive quality management and p
 
 ## Notes and Assumptions
 
-- **Independence from readiness**: A team can adopt agents aggressively on a low-readiness project, but the results will be unpredictable. High adoption on a high-readiness project is the target state.
+- **Independence from readiness**: A team can adopt agents aggressively on a low-readiness project, but the results will be unpredictable. High adoption on a high-readiness project is the target state. As a rough guide: Adoption Level 1 is viable from Readiness Level 1; Adoption Level 2 benefits strongly from Readiness Level 2; Adoption Levels 3 and 4 effectively require Readiness Level 3.
 - **Evidence over artifacts**: Criteria are defined as behavioral dimensions. The same evidence (e.g. an AGENTS.md entry about running tests) may support multiple criteria. When assessing, look for the behavior, not just the presence of a file.
+- **"Recent changes" baseline**: A2 percentage thresholds apply to the last 90 days or last 50 commits, whichever covers more changes. For very young projects with fewer than 50 commits total, use all available history.
 - **Team size**: Criteria like A5 (workflow integration) and A6 (autonomous operation) may look different in a solo project versus a team of twenty. Interpretation should be adjusted accordingly.
+- **Output quality**: This model measures what agents do and how autonomously they operate, not the quality of individual agent outputs. Quality is implicitly captured through A3 (self-verification) and A5 (CI and review integration), but teams should track agent error rates and PR rejection rates separately.
 - **Model evolution**: This is a living document. As the practice of agentic development matures, the levels and criteria will be revised.

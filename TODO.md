@@ -1,4 +1,3 @@
-- review the agent adoption model and adapt if there are any inconsistencies or gaps
 - review and adapt the readiness levels in light of the adoption levels
 - create a quiz that allows users to evaluate their projects based on the agent readiness and adoption models
 - for each readiness criteria, create a skill that can be used by an agent to verify the level of fulfillment of the criteria in a project
