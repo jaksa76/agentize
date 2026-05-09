@@ -73,54 +73,77 @@ The team has automated not only feature delivery but also the long-term health o
 
 ## Criteria
 
-The following criteria are used to assess adoption level. Fulfillment levels for each criterion will be defined separately.
+Each criterion describes a behavioral dimension of adoption. Evidence for each may come from multiple artifact types — AGENTS.md, skills, MCP server configurations, git history, CI/CD configs — rather than any single source. Fulfillment levels for each criterion are defined separately.
 
 ---
 
-### A1 — Developer Agent Adoption Rate
+### A1 — Agent Context Availability
 
-The fraction of the development team that actively uses AI agents as a regular part of their daily workflow (not occasional experimentation).
+The degree to which agents are given sufficient project-specific context to act effectively: understanding the codebase purpose, conventions, architecture, and how to navigate the project.
 
----
-
-### A2 — Implementation Autonomy
-
-The granularity at which agents operate: from line-level completions and edits, through function- and class-level generation, to full story or feature implementation across multiple files with self-directed feedback loops.
+**Evidence:** CLAUDE.md or AGENTS.md with project-specific guidance; architecture documentation written or structured for agent consumption; MCP servers exposing project knowledge.
 
 ---
 
-### A3 — Test Authoring and Maintenance
+### A2 — Agent-Authored Contributions
 
-The degree to which agents write, update, and maintain automated tests as an integral part of development — not just generating tests on request, but doing so automatically as part of implementing any change.
+The degree to which agents meaningfully contribute to the codebase, from occasional co-authored edits through to agents autonomously creating pull requests.
 
----
-
-### A4 — Code Review Integration
-
-The degree to which agents participate in pull request review: flagging issues, suggesting improvements, enforcing conventions, and providing a quality gate before human reviewers engage.
+**Evidence:** Co-authored commits in git history; PR descriptions indicating agent implementation; proportion of recent changes with agent involvement.
 
 ---
 
-### A5 — Delivery Pipeline Integration
+### A3 — Feedback Loop Closure
 
-The degree to which agents are embedded in the team's delivery workflow: creating pull requests, monitoring CI results, triggering deployments, and verifying production outcomes as part of the standard flow — not as ad-hoc actions.
+The degree to which agents can verify their own work before presenting results to a human — running tests, checking compilation, iterating on failures — rather than relying on the human to close the loop.
 
----
-
-### A6 — Continuous Quality Management
-
-The degree to which agents proactively and autonomously address codebase health: tech debt reduction, dependency updates, security vulnerability remediation, and code standard enforcement — initiated by agents rather than humans.
+**Evidence:** AGENTS.md documenting test and build commands for agent use; MCP server access to test runners or build output; skills that include verification steps as part of their workflow.
 
 ---
 
-### A7 — Planning and Discovery Automation
+### A4 — Task Scope
 
-The degree to which agents participate upstream of implementation: generating or refining user stories from high-level goals, decomposing epics into tasks, and contributing to backlog grooming — reducing the manual overhead of the planning process.
+The granularity of work that agents handle end-to-end: from bounded edits (a function, a fix) through to complete story implementation spanning multiple files, services, and test suites.
+
+**Evidence:** Skill definitions describing the scope of tasks; AGENTS.md describing expected task granularity; size and complexity of agent-authored PRs in git history.
+
+---
+
+### A5 — Workflow Integration
+
+The degree to which agents are embedded in team handoffs and delivery rituals rather than used in isolation: creating pull requests, participating in code review, monitoring CI results, and triggering or observing deployments.
+
+**Evidence:** Automated PR creation patterns; CI pipeline configurations invoking agent tasks; review automation configuration; agent-generated PR descriptions or review comments.
+
+---
+
+### A6 — Autonomous Operation
+
+The degree to which agents operate without human initiation — triggered by events (a push, a PR opened, a failing monitor) or running on a schedule — rather than always requiring a developer to start them.
+
+**Evidence:** Scheduled CI/CD workflows that invoke agents; event-triggered agent jobs; cron-based agent pipelines pulling from a backlog.
+
+---
+
+### A7 — Proactive Quality Management
+
+The degree to which agents improve codebase health on their own initiative: opening PRs for tech debt, updating dependencies, remediating security vulnerabilities, and enforcing standards — without being asked.
+
+**Evidence:** Scheduled or bot-authored PRs for dependency updates, security fixes, or refactoring; automated security review jobs that run on every change.
+
+---
+
+### A8 — Planning Integration
+
+The degree to which agents participate upstream of coding: generating or refining user stories from high-level goals, decomposing epics into tasks, and contributing to backlog grooming.
+
+**Evidence:** Skills for story generation or decomposition; MCP server connections to backlog or project management tools; AGENTS.md describing agent involvement in planning workflows.
 
 ---
 
 ## Notes and Assumptions
 
 - **Independence from readiness**: A team can adopt agents aggressively on a low-readiness project, but the results will be unpredictable. High adoption on a high-readiness project is the target state.
-- **Team size**: Criteria like A1 (adoption rate) and A5 (pipeline integration) may look different in a solo project versus a team of twenty. Interpretation should be adjusted accordingly.
+- **Evidence over artifacts**: Criteria are defined as behavioral dimensions. The same evidence (e.g. an AGENTS.md entry about running tests) may support multiple criteria. When assessing, look for the behavior, not just the presence of a file.
+- **Team size**: Criteria like A5 (workflow integration) and A6 (autonomous operation) may look different in a solo project versus a team of twenty. Interpretation should be adjusted accordingly.
 - **Model evolution**: This is a living document. As the practice of agentic development matures, the levels and criteria will be revised.
