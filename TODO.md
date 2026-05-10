@@ -1,3 +1,2 @@
-- create a README.md file in the repository that explains the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
 - create a blog post about the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
 - create a linkedin post about the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them
