@@ -11,7 +11,6 @@ Applying agentic coding to a project can have very different outcomes. It tends 
 We will create a maturity model for evaluating Agentic Coding Readiness. This will allow us to categorise projects into different tiers in terms of how ready a project is. For example
 
 - Level 0 - very little or no benefit from applying agents, agents have no context or feedback mechanism
-
 - Level 1 - agents would be able to perform small steps, but humans needs to micromanage; agents have some feedback (e.g. compilation, unit tests)
 - Level 2 - humans still guide but agents now have context to perform larger steps (plan a story, write tests, etc.)
 - Level 3 - humans provide oversight, agents have full context and strong feedback loops (e2e tests, screenshots) and can autonomously implement most stories
@@ -45,19 +44,6 @@ To automate the verification of the project features through the use of agents. 
 ## Automatic enablement
 
 Additionally we will develop a set of skills that automatically improve the agentic readiness of the project. For example, if the project does not have a reproducible dev environment, the agent can create a devcontainer configuration based on the project structure and dependencies. If the project does not have automated tests, the agent can create unit tests based on the code. If the project does not have architecture documentation, the agent can generate it based on the codebase.
-
-## Tasks
-
-1. draft of levels and criteria (1 week)
-2. create skill for each criteria (2 weeks)
-3. set up agent (2 weeks)
-
-## Resources
-
-- VDI or C3 Engineer 20%
-- a lot of tokens (hundreds of pounds)
-- github repo
-- a place where to host the dashboard (maybe we can use github)
 
 # 2. Agent Adoption Maturity Model
 

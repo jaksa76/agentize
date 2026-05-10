@@ -68,36 +68,28 @@ See [ADOPTION.md](ADOPTION.md) for full level definitions, criterion fulfillment
 
 ## How to Use This Framework
 
-### Step 1: Run the quiz
-
-Run the interactive quiz to get a quick baseline assessment of both your readiness and adoption levels:
-
-```bash
-python3 quiz.py
-```
-
-### Step 2: Run the assessment skills
+### Step 1: Run the assessment skills
 
 Use the Claude Code assessment skills for detailed, evidence-based scoring with per-criterion scores and recommendations:
 
 - `/assess-readiness` — full readiness assessment across all 11 criteria
 - `/assess-adoption` — full adoption assessment across all 8 criteria
 
-### Step 3: Raise your level
+### Step 2: Raise your level
 
 Use the level-raising skills to implement all improvements needed to reach the next level in one step:
 
 - `/improve-readiness` — identifies blocking criteria and implements all required improvements
 - `/improve-adoption` — identifies blocking criteria and implements all required improvements
 
-### Step 4: Verify specific criteria
+### Step 3: Verify specific criteria
 
 Use individual verify skills to check a single criterion in isolation:
 
 - `/verify-c1-1`, `/verify-c2-1`, ... `/verify-c8-2` — verify individual readiness criteria
 - `/verify-a1`, `/verify-a2`, ... `/verify-a8` — verify individual adoption criteria
 
-### Step 5: Improve specific criteria
+### Step 4: Improve specific criteria
 
 Use individual improve skills for targeted, one-criterion-at-a-time improvements:
 
@@ -182,13 +174,7 @@ Use individual improve skills for targeted, one-criterion-at-a-time improvements
    cd agentize
    ```
 
-2. **Run the quiz** to get a quick baseline for your project:
-
-   ```bash
-   python3 quiz.py
-   ```
-
-3. **Try a skill in Claude Code.** Open any software project in Claude Code and run:
+2. **Try a skill in Claude Code.** Open any software project in Claude Code and run:
 
    ```
    /assess-readiness
@@ -205,5 +191,4 @@ Use individual improve skills for targeted, one-criterion-at-a-time improvements
 | `READINESS.md` | Full specification of the Agent Readiness Maturity Model: levels 0–3, all 11 criteria with fulfillment tables, and the level-criteria mapping with rationale. |
 | `ADOPTION.md` | Full specification of the Agent Adoption Maturity Model: levels 0–4, all 8 criteria with fulfillment tables, and the level-criteria mapping with rationale. |
 | `VISION.md` | Original project vision document describing the goals and scope of both models. |
-| `quiz.py` | Interactive command-line quiz for a quick baseline assessment of readiness and adoption levels. |
 | `.claude/skills/` | Claude Code skills for assessing, verifying, and improving both readiness and adoption. Each skill lives in its own subdirectory with a `SKILL.md` file. |

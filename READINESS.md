@@ -25,7 +25,7 @@ An agent operating at this level is essentially guessing: it cannot understand t
 
 ---
 
-### Level 1 — Foundation
+### Level 1 — Disconnected
 
 The project has enough structure for an agent to take small, targeted steps. A human must micromanage each step: reviewing every change, providing explicit context, and manually verifying output. Agents have a basic feedback mechanism (compilation, a handful of unit tests) but lack broader understanding of the system.
 
@@ -38,7 +38,7 @@ The project has enough structure for an agent to take small, targeted steps. A h
 
 ---
 
-### Level 2 — Guided Autonomy
+### Level 2 — Connected
 
 Humans guide agents at the story or feature level rather than step by step. Agents have enough context to plan implementations, write tests, navigate the architecture, and execute multi-step tasks. Feedback loops exist but are not comprehensive — agents can confirm correctness for the unit they changed but may miss cross-cutting effects.
 
@@ -53,7 +53,7 @@ Humans guide agents at the story or feature level rather than step by step. Agen
 
 ---
 
-### Level 3 — Supervised Autonomy
+### Level 3 — Reflexive
 
 Humans operate at a strategic level: defining goals, reviewing outcomes, and handling exceptions. Agents can autonomously implement most stories end-to-end, from understanding the requirement through to deploying the change. Feedback loops are comprehensive — including end-to-end tests, UI verification (where applicable), and observable production behaviour.
 
@@ -180,7 +180,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 
 **Level 0** has no requirements. Any project not meeting Level 1 thresholds falls here.
 
-**Level 1 — Foundation** requires the minimum viable set for an agent to take any useful action at all:
+**Level 1 — Disconnected** requires the minimum viable set for an agent to take any useful action at all:
 
 - **C1.1 ≥ 1**: An agent must be able to find and navigate the codebase. A single root with a README is the absolute minimum — without it, the agent cannot orient itself.
 - **C2.1 ≥ 1**: Written setup instructions allow a human to verify the environment; the agent still needs human help, but the instructions exist as a reference. Zero instructions means even a human cannot reliably reproduce the environment, so agents have no chance.
@@ -189,7 +189,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 
 Architecture docs, requirements, integration tests, static analysis, CI/CD, and observability are not required at Level 1 because a human micromanages each step and can provide this context manually.
 
-**Level 2 — Guided Autonomy** requires enough context and feedback for an agent to plan and execute multi-step tasks independently:
+**Level 2 — Connected** requires enough context and feedback for an agent to plan and execute multi-step tasks independently:
 
 - **C1.1 ≥ 2**: A comprehensive entry-point guide (CLAUDE.md or equivalent) is needed so the agent can navigate conventions and understand the codebase structure without human narration.
 - **C2.1 ≥ 2**: A single-script setup removes the need for a human to walk through instructions, enabling the agent to reset its environment reliably.
@@ -203,7 +203,7 @@ Architecture docs, requirements, integration tests, static analysis, CI/CD, and 
 
 Data isolation and full observability are not required at Level 2 because a human still oversees outcomes and can flag production-visible issues.
 
-**Level 3 — Supervised Autonomy** requires comprehensive feedback and full environmental control so agents can execute end-to-end without per-step human intervention:
+**Level 3 — Reflexive** requires comprehensive feedback and full environmental control so agents can execute end-to-end without per-step human intervention:
 
 - **C2.1 ≥ 3**: A containerised or fully-declarative environment (devcontainer, Nix, etc.) ensures the agent always operates in a perfectly reproducible state, eliminating environment drift as a failure mode.
 - **C3.1 ≥ 3**: Component-level architecture documentation, including critical flows, is required so the agent understands not just service boundaries but the internal structure and behaviour of each component. Without this depth, autonomous implementation risks introducing subtle bugs in component internals or breaking undocumented cross-component invariants.
@@ -212,7 +212,7 @@ Data isolation and full observability are not required at Level 2 because a huma
 - **C5.3 ≥ 2**: End-to-end tests covering critical flows provide a system-level correctness signal. Without E2E coverage, the agent may introduce integration bugs invisible to unit tests.
 - **C6.1 ≥ 2**: Type checking (in addition to linting) catches a class of semantic errors that linting cannot, providing higher-confidence feedback before human review.
 - **C7.1 ≥ 2**: Reproducible database state and vendor sandbox environments allow the agent to test data-path changes safely and consistently.
-- **C8.1 ≥ 3**: Full pipeline control including deployment is required at this level. Supervised Autonomy means agents complete the delivery cycle independently — implement, verify in CI, deploy, and observe the result — with humans providing oversight rather than per-step direction. Without deployment control (C8.1 = 2), agents can trigger CI runs but must hand off to a human to deploy, breaking the end-to-end autonomy that Level 3 describes.
+- **C8.1 ≥ 3**: Full pipeline control including deployment is required at this level. Reflexive means agents complete the delivery cycle independently — implement, verify in CI, deploy, and observe the result — with humans providing oversight rather than per-step direction. Without deployment control (C8.1 = 2), agents can trigger CI runs but must hand off to a human to deploy, breaking the end-to-end autonomy that Level 3 describes.
 - **C8.2 ≥ 2**: Queryable monitoring and logs (structured queries, not just raw tailing) allow the agent to actively interrogate post-deployment behaviour — filtering by time window, service, or error type — rather than manually scanning raw output. At Level 3, agents must verify their own deployments without a human reading logs on their behalf.
 
 C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guide is already required at Level 2 and there is no higher fulfillment level for this criterion.

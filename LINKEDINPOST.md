@@ -10,7 +10,7 @@ High adoption with low readiness: teams enthusiastically assigning whole stories
 
 Both dimensions have to move together.
 
-I built Agentize to make this concrete: two maturity models (Readiness: 4 levels, 11 criteria; Adoption: 5 levels, 8 criteria) and a suite of Claude Code skills that assess and improve both — automatically. Run `/assess-readiness` on any project and it tells you exactly which criterion is dragging your level down. Run `/improve-readiness` and it starts fixing them: generating architecture docs, creating CLAUDE.md, wiring up CI. There's also a quick interactive quiz (`python3 quiz.py`) if you want a five-minute baseline before committing to a deeper assessment.
+I built Agentize to make this concrete: two maturity models (Readiness: 4 levels, 11 criteria; Adoption: 5 levels, 8 criteria) and a suite of Claude Code skills that assess and improve both — automatically. Run `/assess-readiness` on any project and it tells you exactly which criterion is dragging your level down. Run `/improve-readiness` and it starts fixing them: generating architecture docs, creating CLAUDE.md, wiring up CI.
 
 The most useful thing the framework does is separate "we have agents installed" from "agents are doing real work." Most teams are at Adoption Level 1. The jump to Level 2 — where you assign a story and review the diff, rather than directing every step — is the one that actually changes productivity. And it's mostly a behavioral shift, not a tooling one.
 

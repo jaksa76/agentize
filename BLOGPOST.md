@@ -58,8 +58,6 @@ The practical requirements for Level 2 are tightly tied to the readiness model: 
 
 The framework is designed to be immediately actionable. There are three entry points.
 
-**The quiz.** If you want a quick baseline before committing to a deeper assessment, run `python3 quiz.py` from the repository root. It walks through both models with multiple-choice questions and gives you a rough level for each. This takes about five minutes and is a reasonable starting point for a team conversation.
-
 **The assessment skills.** For a detailed, evidence-based scoring with per-criterion analysis, open any software project in Claude Code and run `/assess-readiness` or `/assess-adoption`. These skills inspect the actual codebase — checking for the presence and content of CLAUDE.md, examining test files and coverage configuration, reading CI pipeline definitions, looking at git history for agent-authored commits — and produce a structured report with your achieved level, per-criterion scores, and a prioritized list of what's blocking the next level. Individual criteria can be verified in isolation with skills like `/verify-c5-2` (unit test coverage) or `/verify-a3` (feedback loop closure).
 
 **The improvement skills.** Once you know your gaps, the framework can close them. `/improve-readiness` identifies every criterion blocking the next level and implements the improvements — generating architecture documentation from the codebase, creating a CLAUDE.md with observed conventions, setting up a devcontainer based on the project's dependency structure, adding CI workflow definitions. `/improve-adoption` does the analogous work on the behavioral side: creating agent context files, setting up workflow integration, configuring event-triggered agent pipelines.
@@ -80,7 +78,7 @@ The framework also can't account for team and organizational dynamics. A high-re
 
 ## Where to Start
 
-If any of this resonates, the repository is at [github.com/jaksa76/agentize](https://github.com/jaksa76/agentize). Clone it, run `python3 quiz.py` against your current project (or just answer the questions in your head), and see where you land.
+If any of this resonates, the repository is at [github.com/jaksa76/agentize](https://github.com/jaksa76/agentize). Clone it and run `/assess-readiness` or `/assess-adoption` in Claude Code to see where you land.
 
 My suggestion for most teams currently at Adoption Level 1: don't try to jump to Level 3. Focus first on getting to Level 2 — assign one story to an agent and review the diff rather than directing every step. That single behavioral shift, done consistently, produces more value than any number of tooling improvements. The readiness improvements that matter most for enabling it are CLAUDE.md (so the agent has project context) and enough test coverage to close the feedback loop (so the agent can verify its own work).
 
