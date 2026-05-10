@@ -1,1 +1,0 @@
-- create a linkedin post about the agent readiness and adoption models, how they can be used, and the skills that have been developed to verify and improve them (save it in LINKEDINPOST.md)
