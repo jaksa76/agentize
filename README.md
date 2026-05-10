@@ -82,14 +82,24 @@ See [ADOPTION.md](ADOPTION.md) for full level definitions and criterion fulfillm
 
 ---
 
-## Getting Started
+## Installation
+
+Clone the repository and copy the skills to your Claude Code skills directory.
+
+**Personal install** (skills available in all your projects):
 
 ```bash
 git clone https://github.com/jaksa76/agentize.git
-cd agentize
+cp -r agentize/.claude/skills/* ~/.claude/skills/
 ```
 
-Open any software project in Claude Code and run `/assess-readiness`. Claude Code will score the project across all 11 readiness criteria and tell you exactly what is blocking the next level.
+**Project install** (skills available only in one project):
+
+```bash
+cp -r agentize/.claude/skills/* /your/project/.claude/skills/
+```
+
+Once installed, open any project in Claude Code and run `/assess-readiness` or `/assess-adoption`.
 
 ---
 
