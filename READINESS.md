@@ -182,7 +182,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 
 **Level 1 — Disconnected** requires the minimum viable set for an agent to take any useful action at all:
 
-- **C1.1 ≥ 1**: An agent must be able to find and navigate the codebase. A single root with a README is the absolute minimum — without it, the agent cannot orient itself.
+- **C1.1 ≥ 1**: An agent must be able to access all the code.
 - **C2.1 ≥ 1**: Written setup instructions allow a human to verify the environment; the agent still needs human help, but the instructions exist as a reference. Zero instructions means even a human cannot reliably reproduce the environment, so agents have no chance.
 - **C5.1 ≥ 1**: The project must build. Compilation errors are the most fundamental feedback loop — without them, every agent change may silently break the build.
 - **C5.2 ≥ 1**: At least some unit tests must exist to give the agent a basic correctness signal. Zero tests means the agent gets no feedback beyond "it compiled."
@@ -191,7 +191,7 @@ Architecture docs, requirements, integration tests, static analysis, CI/CD, and 
 
 **Level 2 — Connected** requires enough context and feedback for an agent to plan and execute multi-step tasks independently:
 
-- **C1.1 ≥ 2**: A comprehensive entry-point guide (CLAUDE.md or equivalent) is needed so the agent can navigate conventions and understand the codebase structure without human narration.
+- **C1.1 ≥ 2**: An agent must have easy access to the entire codebase with no added complexity of git submodules or equivalent.
 - **C2.1 ≥ 2**: A single-script setup removes the need for a human to walk through instructions, enabling the agent to reset its environment reliably.
 - **C3.1 ≥ 1**: The agent needs at least a system-context view (users, external systems, high-level purpose) to plan implementations sensibly.
 - **C4.1 ≥ 1**: The agent must be able to read the product vision and goals to understand *why* the system exists and make appropriate trade-offs.
