@@ -81,7 +81,7 @@ The degree to which an agent can see, navigate, and orient itself within the cod
 
 | ID | Criterion | 0 | 1 | 2 |
 |----|-----------|---|---|---|
-| C1.1 | Codebase accessibility | Code split across unlinked repos with no entry point | All code reachable from a single root with a basic README | Comprehensive entry-point guide (CLAUDE.md or equivalent) with conventions and navigation hints |
+| C1.1 | Codebase accessibility | Code split across unlinked repos | Repos linked through submodules or other mechanisms | Monolith or Mono-repo |
 
 ---
 
@@ -111,7 +111,7 @@ The degree to which an agent can understand what the system is supposed to do an
 
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
-| C4.1 | Requirements access | No documented requirements | Product vision and goals documented | User stories or acceptance criteria accessible | Full programmatic access via MCP server or API |
+| C4.1 | Requirements access | No documented requirements | Product vision and goals documented | User stories or acceptance criteria accessible | Full programmatic access (comments refinement) via MCP server or API |
 
 ---
 
@@ -123,7 +123,7 @@ The degree to which an agent can verify that changes are correct and have not ca
 |----|-----------|---|---|---|---|
 | C5.1 | Runnability | Project does not build | Project builds without errors | App can be run locally or in an ephemeral environment | — |
 | C5.2 | Unit test coverage | No unit tests | Some tests present (<50% coverage) | ≥50% coverage | ≥80% coverage |
-| C5.3 | Integration and E2E coverage | No automated integration or E2E tests | Integration tests cover key boundaries | E2E tests cover critical flows | E2E + UI visual regression (if UI present) |
+| C5.3 | Integration and E2E coverage | No automated integration or E2E tests | Integration tests cover key boundaries | E2E tests cover critical flows | E2E + screenshots (if UI present) |
 
 ---
 
