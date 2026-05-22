@@ -12,100 +12,28 @@ Licensed clients may use and modify this material for internal business purposes
 
 # Agent Adoption Assessment
 
-This skill collects evidence for all 8 adoption criteria and instructs you to
-score each one, determine the overall adoption level, and produce a full report.
+This skill runs all 8 criterion checks and produces a structured adoption report.
 
 ---
 
-## Evidence to Gather
+## Instructions
 
-Before scoring, examine the project for evidence relevant to each criterion. Use your knowledge of the project structure and tech stack to look in the right places.
+### Step 1 — Score each criterion
 
-### A1 — Agent Context Availability
-Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) and read their content — assess depth and coverage of conventions, commands, and architecture. Check the MCP server configuration for any servers exposing project knowledge. Look for architecture documentation or a `docs/` directory.
+For each criterion, read the corresponding skill file and follow its evidence-gathering and scoring instructions. Record the score before moving to the next criterion.
 
-### A2 — Agent-Authored Contributions
-Look at recent git history (last 90 days or last 50 commits) and count commits with agent co-authorship markers (Co-Authored-By, Claude/Copilot references, 🤖 emoji, "Generated with"). Calculate the ratio against total recent commits. Check for workflows or merge patterns indicating autonomous PR creation.
-
-### A3 — Feedback Loop Closure
-Read `CLAUDE.md` or `AGENTS.md` for verification or quality-check guidance. Check skill files in `.claude/skills/` for verification steps. Check the MCP server configuration for CI pipeline or production monitoring access. Check `.claude/settings.json` for hooks.
-
-### A4 — Task Scope
-Look at agent-co-authored commits and assess how many files each changed. Read skill definitions to understand the scope they target. Read `CLAUDE.md`/`AGENTS.md` for task granularity guidance. Look at any backlog or task files to assess item granularity.
-
-### A5 — Workflow Integration
-Check `CLAUDE.md`, `AGENTS.md`, and skill files for PR creation instructions. Look at CI workflow files for automated PR creation or review automation. Check the MCP server configuration for CI/pipeline access. Look for evidence of agent-triggered deployments.
-
-### A6 — Autonomous Operation
-Look at CI workflow files for scheduled triggers and event triggers that invoke agents. Check for backlog-pulling workflow patterns. Check `.claude/settings.json` for hooks that trigger agents automatically.
-
-### A7 — Proactive Quality Management
-Check for Dependabot or Renovate configuration. Look at CI workflow files for scheduled quality or security workflows. Check git history for bot-authored commits. Look in `.claude/skills/` for quality-focused skills.
-
-### A8 — Planning Integration
-Check `.claude/skills/` for planning-related skills. Check the MCP server configuration for PM tool connections (Jira, Linear, GitHub Issues, etc.). Read `CLAUDE.md`/`AGENTS.md` for planning guidance. Look for backlog or story files and assess granularity.
+- **A1 Agent Context Availability** — follow the `/verify-a1` skill
+- **A2 Agent-Authored Contributions** — follow the `/verify-a2` skill
+- **A3 Feedback Loop Closure** — follow the `/verify-a3` skill
+- **A4 Task Scope** — follow the `/verify-a4` skill
+- **A5 Workflow Integration** — follow the `/verify-a5` skill
+- **A6 Autonomous Operation** — follow the `/verify-a6` skill
+- **A7 Proactive Quality Management** — follow the `/verify-a7` skill
+- **A8 Planning Integration** — follow the `/verify-a8` skill
 
 ---
 
-## Scoring Instructions
-
-Using the evidence collected above, assign a fulfillment level to each criterion.
-
-### Criterion scoring guides
-
-**A1 Agent Context Availability (0–3)**
-- 0: No CLAUDE.md, AGENTS.md, or equivalent; no meaningful README
-- 1: Basic README exists; no conventions, commands, or navigation guidance
-- 2: CLAUDE.md or AGENTS.md with conventions, key commands, architecture overview
-- 3: Level 2 PLUS architecture docs structured for agent consumption AND MCP servers exposing project knowledge (requirements, diagrams, runbooks)
-
-**A2 Agent-Authored Contributions (0–3)**
-Divide agent-co-authored commit count by total recent commits (last 90 days or 50 commits):
-- 0: 0% — no co-authorship markers in git history
-- 1: < 25% of recent commits have agent co-authorship markers
-- 2: 25–75% of recent commits have agent co-authorship markers
-- 3: > 75%, or evidence of autonomous PR creation (bot-authored PRs, agent-creating workflows)
-
-**A3 Feedback Loop Closure (0–3)**
-- 0: No verification guidance in agent context files or skills
-- 1: Agents run basic checks (build/compile) but not the full test suite
-- 2: CLAUDE.md/AGENTS.md or skills explicitly instruct agents to run the full test suite, iterate on failures, and present only passing results
-- 3: Level 2 PLUS CI pipeline access via MCP AND production monitoring access via MCP enabling post-deployment verification
-
-**A4 Task Scope (0–3)**
-Assess the largest scope routinely handled end-to-end:
-- 0: No agent-authored changes; agents only answer questions
-- 1: Agent commits are consistently 1–2 files; bounded single-function or bug-fix tasks
-- 2: Agent commits regularly span 3+ files including test files; skills describe feature-level scope
-- 3: Agent commits span services/packages; include migrations, docs, comprehensive tests; TODO items are story-level
-
-**A5 Workflow Integration (0–3)**
-- 0: Agents used in isolation; no PR creation in skills or workflows
-- 1: Agents assist with tasks; humans manually create PRs and handle all handoffs
-- 2: Skills or CLAUDE.md instruct agents to create PRs (`gh pr create`); CI MCP access for observing pipeline results
-- 3: All of: agents create PRs, post review comments or trigger review workflows, monitor CI, trigger or observe deployments
-
-**A6 Autonomous Operation (0–3)**
-- 0: Agents always manually started; no automated triggering
-- 1: At least one event-triggered workflow invokes an agent; most work is still manual
-- 2: Agents systematically event-triggered for common events (push, PR, failing monitors)
-- 3: Continuous pipeline pulls from backlog on a schedule; no per-story human initiation
-
-**A7 Proactive Quality Management (0–3)**
-- 0: No automated quality workflows; no Dependabot/Renovate; no bot-authored quality commits
-- 1: Quality-check skills exist that developers explicitly invoke; no automated triggering
-- 2: Scheduled workflows flag/report quality issues without opening PRs to fix them
-- 3: Agents proactively open PRs — Dependabot/Renovate auto-PR, scheduled security fix workflows, bot-authored commits in git history
-
-**A8 Planning Integration (0–3)**
-- 0: No planning-related skills, no PM MCP servers, no planning guidance in agent context
-- 1: Agents assist with planning ad-hoc when prompted; no configured planning step
-- 2: Configured planning step exists — dedicated story/backlog skill, PM MCP server (Jira/Linear/GitHub Issues), or planning workflow in CLAUDE.md
-- 3: Automated planning without human initiation — scheduled story generation, automatic backlog grooming, or autonomous epic decomposition
-
----
-
-## Level–Criteria Mapping
+### Step 2 — Determine the adoption level
 
 After scoring all criteria, determine the highest adoption level where **all** thresholds are met:
 
@@ -124,7 +52,7 @@ Check Level 1 first. If all Level 1 thresholds are met, check Level 2, and so on
 
 ---
 
-## Report Format
+### Step 3 — Produce the report
 
 Produce a report in exactly this structure:
 
