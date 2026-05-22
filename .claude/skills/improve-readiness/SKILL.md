@@ -16,67 +16,42 @@ This skill assesses the current readiness level of the project, identifies which
 
 ---
 
-## Evidence Collection
+## Evidence to Gather
+
+Before scoring, examine the project for evidence relevant to each criterion. Use your knowledge of the project structure and tech stack to look in the right places.
 
 ### C1.1 — Codebase Accessibility
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(no agent context file)"`
-!`wc -l CLAUDE.md 2>/dev/null || wc -l AGENTS.md 2>/dev/null || echo "0 lines"`
-!`head -5 README.md 2>/dev/null || echo "(no README.md)"`
+Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) and read their content. Check for a README and assess its depth.
 
 ### C2.1 — Setup Automation
-!`ls .devcontainer/ devcontainer.json flake.nix shell.nix 2>/dev/null || echo "(no containerised env)"`
-!`ls setup.sh install.sh bootstrap.sh 2>/dev/null || grep -i "^install\b\|^setup\b\|^dev\b" Makefile 2>/dev/null | head -3 || echo "(no setup scripts or Makefile targets)"`
-!`ls package.json requirements.txt Pipfile pyproject.toml pom.xml build.gradle Cargo.toml go.mod 2>/dev/null || echo "(no dependency manifests)"`
-!`grep -A5 -i "getting started\|quick start\|setup\|install" README.md 2>/dev/null | head -10 || echo "(no setup section in README)"`
+Check for a containerised or declarative environment. Look for setup scripts and relevant Makefile targets. Check for dependency manifests. Read the README setup section.
 
 ### C3.1 — Architecture Depth
-!`find . -maxdepth 4 \( -iname "ARCHITECTURE.md" -o -iname "architecture.md" -o -iname "DESIGN.md" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no architecture docs)"`
-!`find docs/ -name "*.md" 2>/dev/null | head -10 || echo "(no docs/ directory)"`
-!`find . -maxdepth 5 \( -name "*.puml" -o -name "*.c4" -o -name "*.drawio" -o -name "*.mmd" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no diagram files)"`
-!`grep -n -i "architecture\|container diagram\|component\|context diagram\|critical flow\|sequence" README.md 2>/dev/null | head -5 || echo "(no architecture keywords in README)"`
+Look for architecture documentation files and diagram files. Check the README for architecture content.
 
 ### C4.1 — Requirements Access
-!`ls VISION.md REQUIREMENTS.md requirements.md GOALS.md 2>/dev/null || echo "(no vision/requirements files at root)"`
-!`ls -d stories/ features/ user-stories/ backlog/ 2>/dev/null || echo "(no stories/backlog directory)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers configured)"`
+Look for vision or requirements files. Check for stories or backlog directories. Check the MCP server configuration for any PM tool connections.
 
 ### C5.1 — Runnability
-!`ls package.json pom.xml build.gradle setup.py pyproject.toml Cargo.toml go.mod 2>/dev/null || echo "(no build system found)"`
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('npm scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
-!`ls Procfile docker-compose.yml docker-compose.yaml 2>/dev/null || echo "(no Procfile or docker-compose)"`
-!`grep -i "^build\b\|^run\b\|^start\b\|^serve\b" Makefile 2>/dev/null | head -3 || echo "(no run/build Makefile targets)"`
+Identify the build system from the dependency manifest. Look for build/run scripts and runtime configuration (Procfile, docker-compose, etc.).
 
 ### C5.2 — Unit Test Coverage
-!`find . -maxdepth 4 -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no test directories)"`
-!`find . -maxdepth 6 \( -name "*.test.ts" -o -name "*.test.js" -o -name "*_test.py" -o -name "test_*.py" -o -name "*Test.java" -o -name "*_test.go" \) 2>/dev/null | grep -v node_modules | wc -l`
-!`ls coverage/ htmlcov/ .coverage 2>/dev/null && echo "(coverage artifacts exist)" || echo "(no coverage artifacts)"`
-!`cat jest.config.js jest.config.ts 2>/dev/null | grep -i "coverage\|threshold" | head -5 || grep -A5 "\[tool.coverage" pyproject.toml 2>/dev/null | head -5 || echo "(no coverage threshold config)"`
+Look for test directories and test files. Look for coverage configuration and report artifacts.
 
 ### C5.3 — Integration and E2E Coverage
-!`ls cypress.config.js cypress.config.ts playwright.config.ts playwright.config.js 2>/dev/null || echo "(no Cypress/Playwright config)"`
-!`ls -d cypress/ e2e/ tests/e2e/ features/ 2>/dev/null || echo "(no E2E directories)"`
-!`find . -maxdepth 5 -type d -name "integration" 2>/dev/null | grep -v node_modules | head -3 || echo "(no integration test directory)"`
+Look for E2E framework configuration and test directories. Look for integration test directories.
 
 ### C6.1 — Static Analysis
-!`ls .eslintrc .eslintrc.js .eslintrc.json eslint.config.js .pylintrc .flake8 ruff.toml .rubocop.yml .golangci.yml 2>/dev/null || echo "(no linting config)"`
-!`ls tsconfig.json mypy.ini .mypy.ini 2>/dev/null || echo "(no type checking config)"`
-!`ls .snyk sonar-project.properties .semgrep.yml 2>/dev/null || grep -r "codeql\|snyk\|semgrep\|trivy\|bandit" .github/workflows/ 2>/dev/null | head -3 || echo "(no SAST config or CI steps)"`
+Look for linting and formatting configuration files. Look for type checking configuration. Look for security scanning configuration and CI steps.
 
 ### C7.1 — Test Isolation
-!`find . -maxdepth 5 -type d \( -name "mocks" -o -name "__mocks__" -o -name "fixtures" -o -name "stubs" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no mock/fixture directories)"`
-!`find . -maxdepth 5 \( -iname "seed*" \) \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.sql" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no seed scripts)"`
-!`ls docker-compose.test.yml docker-compose.testing.yml 2>/dev/null || grep -r "testcontainer\|localstack" . 2>/dev/null --include="*.json" --include="*.ts" --include="*.js" -l | grep -v node_modules | head -3 || echo "(no test-environment isolation tools)"`
+Check if the project has external dependencies. If yes: look for mock/fixture directories, seed scripts, and test-specific container configuration.
 
 ### C8.1 — CI/CD Automation
-!`ls .github/workflows/ 2>/dev/null && ls .github/workflows/ || ls .gitlab-ci.yml Jenkinsfile .circleci/ 2>/dev/null || echo "(no CI config)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l "deploy\|release\|publish" 2>/dev/null | head -3 || echo "(no deployment steps in CI)"`
-!`grep -r "workflow_dispatch" .github/workflows/ 2>/dev/null | head -3 || echo "(no workflow_dispatch triggers)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); ci=[k for k in mcp if any(x in k.lower() for x in ['github','gitlab','ci','pipeline'])]; print('CI MCP servers:', ci if ci else 'none')" 2>/dev/null || echo "(no CI MCP servers)"`
+Look for CI configuration files and read them. Check the MCP server configuration for pipeline access. Look for `workflow_dispatch` triggers and deployment steps.
 
 ### C8.2 — Observability
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; obs=[k for k in deps if any(x in k for x in ['datadog','opentelemetry','@opentelemetry','sentry','newrelic','dd-trace','pino','winston'])]; print('Observability deps:', obs)" 2>/dev/null || true`
-!`ls datadog.yaml prometheus.yml grafana/ 2>/dev/null || echo "(no monitoring config files)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); obs=[k for k in mcp if any(x in k.lower() for x in ['grafana','datadog','sentry','cloudwatch','monitor','metric'])]; print('Observability MCP servers:', obs if obs else 'none')" 2>/dev/null || echo "(no observability MCP servers)"`
+Check dependency manifests for logging and observability libraries. Look for monitoring configuration files. Check the MCP server configuration for observability access.
 
 ---
 
@@ -216,14 +191,7 @@ For each blocking criterion identified in Step 4, apply the improvement logic be
 
 #### C1.1 — Codebase Accessibility (improve-c1-1 logic)
 
-Run these bash commands to gather evidence:
-- `ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(none)"`
-- `cat CLAUDE.md 2>/dev/null || cat AGENTS.md 2>/dev/null || echo "(empty)"`
-- `head -30 README.md 2>/dev/null || echo "(no README.md)"`
-- `ls -la | head -30`
-- `ls src/ lib/ app/ packages/ 2>/dev/null | head -20 || echo "(no standard source directories)"`
-- `cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', d.get('scripts',{}))" 2>/dev/null || true`
-- `grep -i "^build\|^test\|^run\|^start\|^dev\|^lint" Makefile 2>/dev/null | head -10 || echo "(no Makefile targets)"`
+Look at the project to gather evidence: check for agent context files and read their content; read the README; look at the project structure and identify the technology stack; identify key build, run, and test commands.
 
 **If C1.1 = 0 → raise to 1:** Create `README.md` at the project root with: project name and description, getting started section (prerequisites, how to clone and run), basic project structure overview.
 
@@ -254,12 +222,7 @@ Do not write generic placeholder text — base it on the actual project.
 
 #### C2.1 — Setup Automation (improve-c2-1 logic)
 
-Run these bash commands to gather evidence:
-- `cat README.md 2>/dev/null | head -80 || echo "(no README)"`
-- `ls setup.sh install.sh bootstrap.sh Makefile 2>/dev/null || echo "(no scripts)"`
-- `ls package.json requirements.txt Pipfile pyproject.toml pom.xml build.gradle Cargo.toml go.mod 2>/dev/null || echo "(no dependency manifests)"`
-- `ls .devcontainer/ devcontainer.json flake.nix shell.nix 2>/dev/null || echo "(no containerised env)"`
-- `cat Makefile 2>/dev/null | head -40 || echo "(no Makefile)"`
+Look at the project to gather evidence: check for containerised/declarative environment; look for setup scripts and Makefile targets; identify the dependency manifest and install command; read the README setup section.
 
 **If C2.1 = 0 → raise to 1:** Add a "Getting Started" section to `README.md` with: prerequisites (language runtime version, tools), numbered steps to clone and set up, how to verify it worked.
 
@@ -273,13 +236,7 @@ Run these bash commands to gather evidence:
 
 #### C3.1 — Architecture Depth (improve-c3-1 logic)
 
-Run these bash commands to gather evidence:
-- `cat README.md 2>/dev/null || echo "(no README)"`
-- `find . -maxdepth 4 \( -iname "ARCHITECTURE.md" -o -iname "architecture.md" -o -iname "DESIGN.md" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(none)"`
-- `cat ARCHITECTURE.md 2>/dev/null || cat docs/ARCHITECTURE.md 2>/dev/null || echo "(no architecture file)"`
-- `find docs/ -name "*.md" 2>/dev/null | head -10 || echo "(no docs/)"`
-- `ls src/ lib/ app/ packages/ services/ 2>/dev/null | head -20 || echo "(no source dirs)"`
-- `find . -maxdepth 3 -type d 2>/dev/null | grep -v node_modules | grep -v ".git" | head -30`
+Look at the project to gather evidence: check for existing architecture documentation and read it; look at the directory structure and any multi-service configuration to understand the system; read the README; browse route/handler files to understand the API surface.
 
 **If C3.1 = 0 → raise to 1:** Create `ARCHITECTURE.md` at the project root with a system context section: what the system does, who its users are, what external systems it integrates with, and a high-level description of the main components. Read the codebase to infer this — do not write placeholders.
 
@@ -293,12 +250,7 @@ Run these bash commands to gather evidence:
 
 #### C4.1 — Requirements Access (improve-c4-1 logic)
 
-Run these bash commands to gather evidence:
-- `cat VISION.md 2>/dev/null || cat REQUIREMENTS.md 2>/dev/null || echo "(no vision/requirements file)"`
-- `ls -d stories/ features/ user-stories/ backlog/ 2>/dev/null || echo "(no stories directory)"`
-- `cat README.md 2>/dev/null | head -100 || echo "(no README)"`
-- `head -50 src/index.ts src/index.js src/main.py app/main.py main.go 2>/dev/null || find . -maxdepth 3 \( -name "main.*" -o -name "index.*" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no obvious entry points)"`
-- `grep -r "app\.\(get\|post\|put\|delete\|patch\)\|router\.\(get\|post\)" --include="*.js" --include="*.ts" -h . 2>/dev/null | grep -v node_modules | head -20 || echo "(no route definitions)"`
+Look at the project to gather evidence: check for existing vision or requirements files and read them; look for stories or backlog directories; check MCP configuration for PM tool connections; read the README and browse source files to understand what the system does.
 
 **If C4.1 = 0 → raise to 1:** Create `VISION.md` at the project root. Infer the product's purpose, users, and goals from the README and codebase. Include: Problem (what it solves), Users (who uses it), Goals (3–5 key product goals), Non-goals (what is out of scope), Success metrics. Base on actual evidence — no placeholders.
 
@@ -323,12 +275,7 @@ Infer features from routes, controllers, and existing code. Aim for 10–20 stor
 
 #### C5.1 — Runnability (improve-c5-1 logic)
 
-Run these bash commands to gather evidence:
-- `cat README.md 2>/dev/null | head -60 || echo "(no README)"`
-- `cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(json.dumps(d.get('scripts',{}), indent=2))" 2>/dev/null || true`
-- `cat Makefile 2>/dev/null | head -60 || echo "(no Makefile)"`
-- `ls Procfile docker-compose.yml docker-compose.yaml 2>/dev/null || echo "(no Procfile or docker-compose)"`
-- `ls src/ app/ 2>/dev/null | head -10 || echo "(no source)"`
+Look at the project to gather evidence: identify the language and build system from the dependency manifest; look for build and run scripts and Makefile targets; look for runtime configuration such as Procfile or docker-compose; read the README for build and run instructions.
 
 **If C5.1 = 0 → raise to 1:** The project does not build. Investigate the build errors, fix them, and ensure `npm run build` / `cargo build` / `python -m py_compile` / etc. exits cleanly. Document the build command in README.
 
@@ -340,11 +287,7 @@ Run these bash commands to gather evidence:
 
 #### C5.2 — Unit Test Coverage (improve-c5-2 logic)
 
-Run these bash commands to gather evidence:
-- `find . -maxdepth 4 -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) 2>/dev/null | grep -v node_modules | head -5`
-- `find . -maxdepth 6 \( -name "*.test.ts" -o -name "*.test.js" -o -name "*_test.py" -o -name "test_*.py" -o -name "*Test.java" -o -name "*_test.go" \) 2>/dev/null | grep -v node_modules | head -20`
-- `cat jest.config.js jest.config.ts 2>/dev/null | head -30 || cat pyproject.toml 2>/dev/null | grep -A10 "\[tool.pytest" | head -15 || echo "(no test config)"`
-- `ls src/ app/ lib/ 2>/dev/null | head -20`
+Look at the project to gather evidence: look for test directories and test files; identify the test framework from the manifest or config files; look for coverage configuration and existing coverage reports; look at source directories to understand the scope of untested code.
 
 **If C5.2 = 0 → raise to 1:** No tests exist. Set up the test framework (Jest for JS/TS, pytest for Python, etc.), write tests for the 2–3 most critical functions or modules. Add a `test` script to package.json / Makefile.
 
@@ -358,12 +301,7 @@ Run these bash commands to gather evidence:
 
 #### C5.3 — Integration and E2E Coverage (improve-c5-3 logic)
 
-Run these bash commands to gather evidence:
-- `ls cypress.config.js cypress.config.ts playwright.config.ts playwright.config.js 2>/dev/null || echo "(no E2E config)"`
-- `find . -maxdepth 5 -type d -name "integration" 2>/dev/null | grep -v node_modules | head -5`
-- `ls -d cypress/ e2e/ tests/e2e/ features/ 2>/dev/null || echo "(no E2E directories)"`
-- `cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; print('relevant deps:', [k for k in deps if any(x in k for x in ['cypress','playwright','supertest','jest-integration'])])" 2>/dev/null || true`
-- `ls src/ app/ lib/ 2>/dev/null | head -10`
+Look at the project to gather evidence: look for E2E framework configuration and test directories; look for integration test directories and files; check the dependency manifest for E2E testing libraries and visual regression tools; look at source directories to understand the main flows to cover.
 
 **If C5.3 = 0 → raise to 1:** No integration tests exist. Set up integration tests for key service boundaries. For a REST API: use supertest (Node) or pytest with httpx/requests (Python) to test key endpoints end-to-end. Create `tests/integration/` directory, write 3–5 integration tests covering the most critical API boundaries. Add an `test:integration` script.
 
@@ -377,13 +315,7 @@ Run these bash commands to gather evidence:
 
 #### C6.1 — Static Analysis (improve-c6-1 logic)
 
-Run these bash commands to gather evidence:
-- `ls .eslintrc .eslintrc.js .eslintrc.json eslint.config.js .pylintrc .flake8 ruff.toml .rubocop.yml .golangci.yml 2>/dev/null || echo "(no linting config)"`
-- `ls tsconfig.json mypy.ini .mypy.ini 2>/dev/null || echo "(no type checking config)"`
-- `cat tsconfig.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); o=d.get('compilerOptions',{}); print('strict:', o.get('strict'), 'noImplicitAny:', o.get('noImplicitAny'))" 2>/dev/null || true`
-- `ls .snyk sonar-project.properties .semgrep.yml 2>/dev/null || grep -r "codeql\|snyk\|semgrep\|trivy\|bandit" .github/workflows/ 2>/dev/null | head -3 || echo "(no SAST config)"`
-- `cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; print('relevant:', [k for k in deps if any(x in k for x in ['eslint','prettier','typescript','@typescript'])])" 2>/dev/null || true`
-- `ls *.json *.toml *.yml 2>/dev/null | head -10`
+Look at the project to gather evidence: identify the language and build system; look for linting and formatting configuration files; look for type checking configuration; look for security scanning configuration files and CI steps; check the build scripts and Makefile for existing quality commands.
 
 **If C6.1 = 0 → raise to 1:** No linting/formatting configured. Install and configure a linter appropriate for the project language:
 - JS/TS: install `eslint` and `prettier`, create `eslint.config.js` (or `.eslintrc.json`) and `.prettierrc`; add `lint` and `format` npm scripts.
@@ -408,11 +340,7 @@ Fix any type errors introduced.
 
 #### C7.1 — Test Isolation (improve-c7-1 logic)
 
-Run these bash commands to gather evidence:
-- `find . -maxdepth 5 -type d \( -name "mocks" -o -name "__mocks__" -o -name "fixtures" -o -name "stubs" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no mock/fixture directories)"`
-- `find . -maxdepth 5 \( -iname "seed*" \) \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.sql" \) 2>/dev/null | grep -v node_modules | head -5 || echo "(no seed scripts)"`
-- `ls docker-compose.test.yml docker-compose.testing.yml 2>/dev/null || echo "(none)"`
-- `grep -r "testcontainer\|localstack\|pg\|postgres\|mysql\|redis\|mongodb" --include="*.json" --include="*.ts" --include="*.js" -l . 2>/dev/null | grep -v node_modules | head -5 || echo "(no DB or external deps detected)"`
+Look at the project to gather evidence: check the manifest and source files for external dependencies such as databases or external APIs (this determines applicability); look for mock, stub, or fixture directories; look for seed scripts; look for test-specific container configuration.
 
 **If C7.1 = N/A (no external dependencies):** Skip; report N/A.
 
@@ -426,12 +354,7 @@ Run these bash commands to gather evidence:
 
 #### C8.1 — CI/CD Automation (improve-c8-1 logic)
 
-Run these bash commands to gather evidence:
-- `ls .github/workflows/ 2>/dev/null && cat .github/workflows/*.yml 2>/dev/null | head -60 || echo "(no GitHub Actions)"`
-- `ls .gitlab-ci.yml Jenkinsfile .circleci/ 2>/dev/null || echo "(no other CI)"`
-- `grep -r "workflow_dispatch" .github/workflows/ 2>/dev/null | head -5 || echo "(no workflow_dispatch)"`
-- `grep -r "deploy\|release\|publish" .github/workflows/ 2>/dev/null | head -10 || echo "(no deployment steps)"`
-- `cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()))" 2>/dev/null || echo "(no MCP servers)"`
+Look at the project to gather evidence: look for CI configuration files and read them; check for manual trigger support; check the MCP configuration for pipeline access; look for deployment steps in existing workflows and any infrastructure configuration.
 
 **If C8.1 = 0 → raise to 1:** No CI pipeline exists. Create `.github/workflows/ci.yml` with a basic pipeline that: checks out code, sets up the runtime (node, python, etc.), installs dependencies, runs lint, runs tests, reports status. This gives agents read access to pipeline status via the GitHub MCP or GitHub CLI.
 
@@ -445,10 +368,7 @@ Run these bash commands to gather evidence:
 
 #### C8.2 — Observability (improve-c8-2 logic)
 
-Run these bash commands to gather evidence:
-- `cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; obs=[k for k in deps if any(x in k for x in ['datadog','opentelemetry','sentry','newrelic','dd-trace','pino','winston','bunyan'])]; print('Observability deps:', obs)" 2>/dev/null || true`
-- `ls datadog.yaml prometheus.yml grafana/ 2>/dev/null || echo "(no monitoring config files)"`
-- `cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); obs=[k for k in mcp if any(x in k.lower() for x in ['grafana','datadog','sentry','cloudwatch','monitor','metric'])]; print('Observability MCP servers:', obs if obs else 'none')" 2>/dev/null || echo "(no observability MCP servers)"`
+Look at the project to gather evidence: check the dependency manifest for logging and observability libraries; look for monitoring configuration files; check the MCP configuration for observability servers; look for alerting configuration files; identify the language and framework from the manifest and main entry point.
 
 **If C8.2 = 0 → raise to 1:** No observability. Add structured logging to the application:
 - JS/TS: install `pino` or `winston`, replace `console.log` calls with structured logger calls.

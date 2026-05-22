@@ -14,25 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### PR creation patterns in git/GitHub history
-!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -i "gh pr\|pull request\|PR#\|created pr" | head -10 || echo "(no PR creation evidence)"`
+Examine the project to understand its current state:
 
-### Agent context files — PR/workflow guidance
-!`grep -i "pr\|pull request\|review\|ci\|deploy\|workflow\|handoff" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no workflow guidance in context files)"`
-
-### Skills with PR creation steps
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "gh pr\|pull request\|PR" 2>/dev/null | head -10 || echo "(no PR creation in skills)"`
-
-### CI configuration
-!`ls .github/workflows/ 2>/dev/null | head -10 || echo "(no GitHub Actions workflows)"`
-!`ls .circleci/config.yml .travis.yml Jenkinsfile 2>/dev/null || echo "(no other CI config)"`
-
-### Review automation
-!`ls .github/CODEOWNERS .github/pull_request_template.md 2>/dev/null || echo "(no review automation config)"`
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -l "review\|comment\|approve" 2>/dev/null || echo "(no review automation workflows)"`
-
-### MCP servers (for CI/deployment access)
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers)"`
+- Check `CLAUDE.md`, `AGENTS.md`, and skill files for any PR creation or workflow guidance.
+- Look at recent git history for evidence of agent-created pull requests.
+- Look at CI workflow files for review automation or deployment steps.
+- Check the MCP server configuration for any CI or GitHub/GitLab access.
 
 ## Instructions
 

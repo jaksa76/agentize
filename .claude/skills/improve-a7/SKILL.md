@@ -14,23 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Dependency update automation
-!`ls .github/dependabot.yml 2>/dev/null && echo "(dependabot configured)" || echo "(no dependabot)"`
-!`cat .github/dependabot.yml 2>/dev/null | head -20 || echo "(no dependabot config)"`
-!`ls renovate.json .renovaterc .renovaterc.json 2>/dev/null && echo "(renovate configured)" || echo "(no renovate)"`
+Examine the project to understand its current state:
 
-### Security scanning workflows
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -l "codeql\|snyk\|trivy\|audit\|security\|vulnerability" 2>/dev/null || echo "(no security workflows)"`
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -h "codeql\|snyk\|trivy\|npm audit\|pip-audit" 2>/dev/null | head -10 || echo "(no security scan steps)"`
-
-### Tech debt / quality scheduled workflows
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -l "schedule" 2>/dev/null | xargs grep -l "lint\|debt\|refactor\|todo\|fixme\|quality" 2>/dev/null || echo "(no scheduled quality workflows)"`
-
-### Evidence of bot/agent PRs for quality work
-!`git log --since="90 days ago" --format="%s" 2>/dev/null | grep -i "bump\|update dep\|security\|vulnerability\|cve\|renovate\|dependabot" | head -10 || echo "(no automated quality PRs found)"`
-
-### Package manager (to tailor dependency update config)
-!`ls package.json pyproject.toml pom.xml go.mod Cargo.toml requirements.txt 2>/dev/null | head -5 || echo "(no package manifest)"`
+- Check for Dependabot or Renovate configuration files.
+- Look at CI workflow files for security scanning or scheduled quality workflows.
+- Check git history for bot-authored or automated quality commits (dependency updates, security fixes).
+- Identify the dependency manifest to understand which package manager is in use.
 
 ## Instructions
 

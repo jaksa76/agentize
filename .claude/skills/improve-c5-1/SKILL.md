@@ -14,26 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Build system detection
-!`ls package.json pom.xml build.gradle build.gradle.kts setup.py pyproject.toml Cargo.toml go.mod mix.exs 2>/dev/null || echo "(no build manifests)"`
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('main:', d.get('main')); print('scripts:', d.get('scripts',{}))" 2>/dev/null || true`
+Examine the project to understand its current state:
 
-### Run configuration
-!`ls Procfile docker-compose.yml docker-compose.yaml .env.example 2>/dev/null || echo "(none)"`
-!`cat Procfile 2>/dev/null | head -10 || echo "(no Procfile)"`
-!`cat docker-compose.yml 2>/dev/null | head -40 || echo "(no docker-compose.yml)"`
-
-### Existing Dockerfile
-!`cat Dockerfile 2>/dev/null | head -30 || echo "(no Dockerfile)"`
-
-### Makefile run targets
-!`grep -i "^run\b\|^start\b\|^serve\b\|^dev\b" Makefile 2>/dev/null | head -10 || echo "(no run targets in Makefile)"`
-
-### Entry point detection
-!`head -10 src/index.ts src/index.js src/main.py main.go main.rs 2>/dev/null || echo "(no obvious entry points)"`
-
-### Environment variables
-!`cat .env.example 2>/dev/null | head -20 || ls .env* 2>/dev/null || echo "(no .env files)"`
+- Identify the language and build system from the dependency manifest.
+- Look for build and run scripts in the build manifest, Makefile, or equivalent.
+- Look for runtime configuration (Procfile, docker-compose, Dockerfile, .env.example, etc.).
+- Look for the main entry point to understand how the app is started.
 
 ## Instructions
 

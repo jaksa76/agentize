@@ -14,26 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Agent context files
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(none)"`
-!`wc -l CLAUDE.md 2>/dev/null || wc -l AGENTS.md 2>/dev/null || echo "0 lines"`
-!`cat CLAUDE.md 2>/dev/null || cat AGENTS.md 2>/dev/null || echo "(empty)"`
+Examine the project to understand its current state:
 
-### MCP servers
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no settings.json)"`
-!`cat .mcp.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('MCP servers:', list(d.get('mcpServers',{}).keys()))" 2>/dev/null || echo "(no .mcp.json)"`
-
-### Architecture docs
-!`find docs/ -name "*.md" 2>/dev/null | head -10 || find . -maxdepth 3 -iname "ARCHITECTURE.md" 2>/dev/null | head -5 || echo "(no architecture docs)"`
-
-### README
-!`head -40 README.md 2>/dev/null || echo "(no README)"`
-
-### Project structure and stack
-!`ls -la | head -20`
-!`ls package.json pyproject.toml pom.xml go.mod Cargo.toml 2>/dev/null || echo "(no build manifests)"`
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
-!`grep -i "^build\|^test\|^run\|^start\|^lint\|^dev" Makefile 2>/dev/null | head -10 || echo "(no Makefile targets)"`
+- Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) and read their content.
+- Check the MCP server configuration for any servers that expose project knowledge.
+- Look for architecture documentation or a `docs/` directory.
+- Read `README.md` to assess its current depth and usefulness.
+- Look at the project root to understand the structure and technology stack.
 
 ## Instructions
 

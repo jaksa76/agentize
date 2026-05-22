@@ -20,26 +20,16 @@ Licensed clients may use and modify this material for internal business purposes
 | 1 | All code reachable from a single root with a basic README |
 | 2 | Comprehensive entry-point guide (CLAUDE.md or equivalent) with conventions and navigation hints |
 
-## Evidence
+## Evidence to Gather
 
-### Root structure
-!`ls -la 2>/dev/null | head -30`
-
-### README presence and content
-!`head -40 README.md 2>/dev/null || echo "(no README.md found)"`
-
-### Agent context file (CLAUDE.md / AGENTS.md)
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(none found)"`
-
-### Agent context file content (first 60 lines)
-!`head -60 CLAUDE.md 2>/dev/null || head -60 AGENTS.md 2>/dev/null || echo "(no agent context file)"`
-
-### Multi-repo indicators
-!`cat .gitmodules 2>/dev/null || echo "(no .gitmodules)"`
+- Look at the project root structure to understand the overall layout and whether there is a single entry point.
+- Read `README.md` and assess its usefulness as a starting point for an agent or newcomer.
+- Check for `CLAUDE.md`, `AGENTS.md`, or equivalent and read their content to assess quality and depth.
+- Check for any indicators of a multi-repo setup (gitmodules, symlinks, references to other repos).
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for C1.1.
+Gather the evidence described above and determine the fulfillment level for C1.1.
 
 Scoring guide:
 - **Level 0**: No single entry point; code is split across unlinked locations with no README to orient a newcomer.

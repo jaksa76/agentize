@@ -14,21 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### E2E framework
-!`ls cypress.config.js cypress.config.ts playwright.config.ts playwright.config.js 2>/dev/null || echo "(no E2E framework config)"`
-!`ls -d cypress/ e2e/ tests/e2e/ 2>/dev/null || echo "(no E2E directories)"`
+Examine the project to understand its current state:
 
-### Integration tests
-!`find . -maxdepth 5 -type d -name "integration" 2>/dev/null | grep -v node_modules | head -5 || echo "(no integration test directory)"`
-!`find . -maxdepth 6 \( -iname "*integration*" \) \( -name "*.test.*" -o -name "*.spec.*" -o -name "*_test.*" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no integration test files)"`
-
-### Visual regression
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; vr=[k for k in deps if any(x in k for x in ['percy','chromatic','image-snapshot'])]; print('Visual regression deps:', vr)" 2>/dev/null || true`
-
-### App type / endpoints
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; web=[k for k in deps if any(x in k for x in ['express','fastify','koa','hono','next','react','vue','angular','svelte'])]; print('Web deps:', web)" 2>/dev/null || true`
-!`grep -r "app\.\(get\|post\|put\|delete\)\|router\.\(get\|post\)" --include="*.ts" --include="*.js" -h . 2>/dev/null | grep -v node_modules | head -15 || echo "(no route definitions)"`
-!`ls -d tests/ test/ __tests__/ 2>/dev/null || echo "(no test directory)"`
+- Look for any existing E2E framework configuration and E2E test directories.
+- Look for existing integration test directories and files.
+- Check dependency manifests for web frameworks, E2E testing libraries, and visual regression tools.
+- Look for route or endpoint definitions to understand the application's surface area for testing.
+- Check existing test directories to understand what test infrastructure already exists.
 
 ## Instructions
 

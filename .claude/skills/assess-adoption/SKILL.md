@@ -17,68 +17,33 @@ score each one, determine the overall adoption level, and produce a full report.
 
 ---
 
-## Evidence Collection
+## Evidence to Gather
+
+Before scoring, examine the project for evidence relevant to each criterion. Use your knowledge of the project structure and tech stack to look in the right places.
 
 ### A1 — Agent Context Availability
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(no agent context file)"`
-!`wc -l CLAUDE.md 2>/dev/null || wc -l AGENTS.md 2>/dev/null || echo "(no agent context file)"`
-!`head -60 CLAUDE.md 2>/dev/null || head -60 AGENTS.md 2>/dev/null || echo "(no content)"`
-!`grep -i "convention\|command\|architecture\|run\|test\|build\|navigate\|workflow" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no key sections found)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers)"`
-!`find docs/ -name "*.md" 2>/dev/null | head -10 || echo "(no docs/ directory)"`
+Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) and read their content — assess depth and coverage of conventions, commands, and architecture. Check the MCP server configuration for any servers exposing project knowledge. Look for architecture documentation or a `docs/` directory.
 
 ### A2 — Agent-Authored Contributions
-!`git log --oneline --since="90 days ago" 2>/dev/null | wc -l || echo "(no git history)"`
-!`git log -50 --oneline 2>/dev/null | wc -l || echo "0"`
-!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -ic "co-authored-by\|🤖\|generated with\|claude\|copilot\|github-actions\[bot\]" 2>/dev/null || echo "0"`
-!`git log --since="90 days ago" --format="%s%n%b" 2>/dev/null | grep -i "co-authored-by\|🤖\|generated with claude\|copilot" | head -15 || echo "(no agent co-authorship markers found)"`
-!`git log -50 --format="%B" 2>/dev/null | grep -ic "co-authored-by.*claude\|co-authored-by.*copilot\|co-authored-by.*anthropic\|🤖" 2>/dev/null || echo "0"`
-!`git log --since="90 days ago" --merges --format="%s" 2>/dev/null | grep -i "claude\|copilot\|agent\|🤖" | head -10 || echo "(no agent-attributed merge commits)"`
+Look at recent git history (last 90 days or last 50 commits) and count commits with agent co-authorship markers (Co-Authored-By, Claude/Copilot references, 🤖 emoji, "Generated with"). Calculate the ratio against total recent commits. Check for workflows or merge patterns indicating autonomous PR creation.
 
 ### A3 — Feedback Loop Closure
-!`grep -i "test\|build\|verify\|check\|lint\|run\|before.*submit\|before.*pr\|validate" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no verification guidance in agent context files)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "run.*test\|npm test\|pytest\|go test\|cargo test\|lint\|build" 2>/dev/null | head -10 || echo "(no test/build commands in skills)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); ci=[k for k in mcp if any(x in k.lower() for x in ['github','gitlab','ci','pipeline'])]; obs=[k for k in mcp if any(x in k.lower() for x in ['grafana','datadog','sentry','monitor','metric'])]; print('CI MCP:', ci if ci else 'none'); print('Observability MCP:', obs if obs else 'none')" 2>/dev/null || echo "(no relevant MCP servers)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); hooks=d.get('hooks',{}); print('Hooks:', list(hooks.keys()) if hooks else 'none')" 2>/dev/null || echo "(no hooks)"`
+Read `CLAUDE.md` or `AGENTS.md` for verification or quality-check guidance. Check skill files in `.claude/skills/` for verification steps. Check the MCP server configuration for CI pipeline or production monitoring access. Check `.claude/settings.json` for hooks.
 
 ### A4 — Task Scope
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "story\|feature\|implement\|multi-file\|cross-service\|end-to-end\|migration" 2>/dev/null | head -15 || echo "(no scope-related content in skills)"`
-!`grep -i "story\|feature\|task\|scope\|multi-file\|cross-service\|function\|file" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no task scope guidance in agent context)"`
-!`head -10 TODO.md 2>/dev/null || head -10 BACKLOG.md 2>/dev/null || echo "(no TODO/BACKLOG)"`
-!`git log --since="90 days ago" --format="%H %s" 2>/dev/null | head -80 | while read hash msg; do
-  body=$(git show --format="%B" --no-patch "$hash" 2>/dev/null)
-  if echo "$body" | grep -qi "co-authored-by\|claude\|copilot"; then
-    files=$(git show --stat "$hash" 2>/dev/null | tail -1 | grep -o "[0-9]* file" | grep -o "[0-9]*")
-    if [ -n "$files" ] 2>/dev/null; then echo "Agent commit ($files files): $msg"; fi
-  fi
-done 2>/dev/null | head -15 || echo "(could not compute agent commit sizes)"`
+Look at agent-co-authored commits and assess how many files each changed. Read skill definitions to understand the scope they target. Read `CLAUDE.md`/`AGENTS.md` for task granularity guidance. Look at any backlog or task files to assess item granularity.
 
 ### A5 — Workflow Integration
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "git push\|gh pr create\|pull request" 2>/dev/null | head -10 || echo "(no PR creation steps in skills)"`
-!`grep -i "pull request\|PR\|gh pr\|push" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no PR guidance in agent context)"`
-!`grep -r "gh pr create\|peter-evans/create-pull-request\|hub pull-request" .github/workflows/ 2>/dev/null | head -5 || echo "(no automated PR creation in workflows)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); ci=[k for k in mcp if any(x in k.lower() for x in ['github','gitlab','ci'])]; print('CI MCP servers:', ci if ci else 'none')" 2>/dev/null || echo "(no CI MCP servers)"`
-!`grep -r "deploy\|kubectl\|helm\|terraform apply" .github/workflows/ 2>/dev/null | grep -i "agent\|claude\|workflow_dispatch" | head -5 || echo "(no agent-triggered deployments)"`
+Check `CLAUDE.md`, `AGENTS.md`, and skill files for PR creation instructions. Look at CI workflow files for automated PR creation or review automation. Check the MCP server configuration for CI/pipeline access. Look for evidence of agent-triggered deployments.
 
 ### A6 — Autonomous Operation
-!`grep -r -A3 "schedule:\|cron:" .github/workflows/ 2>/dev/null | head -20 || echo "(no scheduled workflows)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "claude\|copilot\|agent\|openai\|anthropic" 2>/dev/null | head -10 || echo "(no agent-invoking workflow files)"`
-!`grep -r -i "claude\|copilot\|anthropic" .github/workflows/ 2>/dev/null | head -15 || echo "(no agent invocations in workflows)"`
-!`grep -r "^on:" -A10 .github/workflows/ 2>/dev/null | head -40 || echo "(no workflow trigger configs)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "backlog\|todo\|next.*task\|pick.*task\|queue" 2>/dev/null | head -5 || echo "(no backlog-pulling workflows)"`
+Look at CI workflow files for scheduled triggers and event triggers that invoke agents. Check for backlog-pulling workflow patterns. Check `.claude/settings.json` for hooks that trigger agents automatically.
 
 ### A7 — Proactive Quality Management
-!`ls .github/dependabot.yml .github/dependabot.yaml renovate.json .renovaterc 2>/dev/null || echo "(no Dependabot or Renovate config)"`
-!`cat .github/dependabot.yml 2>/dev/null | head -15 || cat renovate.json 2>/dev/null | head -15 || echo "(no dependency update config)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "schedule.*security\|schedule.*audit\|schedule.*quality\|codeql\|snyk\|trivy" 2>/dev/null | head -5 || echo "(no scheduled security/quality workflows)"`
-!`git log --since="90 days ago" --author="dependabot\[bot\]\|renovate\[bot\]\|github-actions\[bot\]" --oneline 2>/dev/null | head -15 || echo "(no bot-authored commits)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -l -i "security\|tech.debt\|dependency\|audit\|vulnerability" 2>/dev/null | head -5 || echo "(no quality-focused skills)"`
+Check for Dependabot or Renovate configuration. Look at CI workflow files for scheduled quality or security workflows. Check git history for bot-authored commits. Look in `.claude/skills/` for quality-focused skills.
 
 ### A8 — Planning Integration
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -l -i "story\|planning\|backlog\|decompose\|grooming\|epic" 2>/dev/null | head -5 || echo "(no planning-related skills)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); pm=[k for k in mcp if any(x in k.lower() for x in ['jira','linear','github','trello','notion','asana','clickup','shortcut'])]; print('PM MCP servers:', pm if pm else 'none')" 2>/dev/null || echo "(no PM MCP servers)"`
-!`grep -i "story\|planning\|backlog\|grooming\|epic\|sprint\|ticket" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no planning guidance in agent context)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "story\|backlog\|grooming\|planning\|decompose" 2>/dev/null | head -5 || echo "(no planning workflows)"`
+Check `.claude/skills/` for planning-related skills. Check the MCP server configuration for PM tool connections (Jira, Linear, GitHub Issues, etc.). Read `CLAUDE.md`/`AGENTS.md` for planning guidance. Look for backlog or story files and assess granularity.
 
 ---
 

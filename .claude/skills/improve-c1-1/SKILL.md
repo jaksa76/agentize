@@ -14,29 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Agent context file
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(none)"`
-!`wc -l CLAUDE.md 2>/dev/null || wc -l AGENTS.md 2>/dev/null || echo "0"`
-!`cat CLAUDE.md 2>/dev/null || cat AGENTS.md 2>/dev/null || echo "(empty)"`
+Examine the project to understand its current state:
 
-### README
-!`head -30 README.md 2>/dev/null || echo "(no README.md)"`
-
-### Project structure
-!`ls -la | head -30`
-!`ls src/ lib/ app/ packages/ 2>/dev/null | head -20 || echo "(no standard source directories)"`
-
-### Build / run commands
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', d.get('scripts',{}))" 2>/dev/null || true`
-!`grep -i "^build\|^test\|^run\|^start\|^dev\|^lint" Makefile 2>/dev/null | head -10 || echo "(no Makefile targets)"`
-
-### Language / framework detection
-!`ls package.json 2>/dev/null && echo "Node/JS project" || true`
-!`ls pyproject.toml setup.py requirements.txt 2>/dev/null && echo "Python project" || true`
-!`ls pom.xml build.gradle 2>/dev/null && echo "Java project" || true`
-!`ls Cargo.toml 2>/dev/null && echo "Rust project" || true`
-!`ls go.mod 2>/dev/null && echo "Go project" || true`
-!`ls .gitmodules 2>/dev/null && echo "Multi-repo (gitmodules present)" || echo "(single repo)"`
+- Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) and read their full content.
+- Read `README.md` to assess its depth.
+- Look at the project root structure and source directories to understand the layout and technology stack.
+- Identify key build, run, and test commands from the build manifest or Makefile.
 
 ## Instructions
 

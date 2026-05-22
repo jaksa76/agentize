@@ -14,24 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### External dependency detection
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; db=[k for k in deps if any(x in k for x in ['pg','mysql','mongo','redis','prisma','typeorm','sequelize','knex','sqlite'])]; ext=[k for k in deps if any(x in k for x in ['axios','fetch','got','node-fetch','request','stripe','twilio','sendgrid'])]; print('DB deps:', db); print('External API deps:', ext)" 2>/dev/null || true`
-!`grep -r "process.env.DATABASE_URL\|mongoose.connect\|createPool\|PrismaClient\|redis.createClient" --include="*.ts" --include="*.js" --include="*.py" -l . 2>/dev/null | grep -v node_modules | head -10 || echo "(no DB connection patterns found)"`
+Examine the project to understand its current state:
 
-### Existing mocks / fixtures
-!`find . -maxdepth 5 -type d \( -name "mocks" -o -name "__mocks__" -o -name "fixtures" -o -name "stubs" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no mock/fixture directories)"`
-!`find . -maxdepth 5 \( -name "*.mock.*" -o -name "mock_*.py" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no mock files)"`
-
-### Seed scripts
-!`find . -maxdepth 5 \( -iname "seed*" \) \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.sql" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no seed scripts)"`
-!`ls prisma/seed.ts prisma/seed.js 2>/dev/null || echo "(no Prisma seed)"`
-
-### Test docker-compose
-!`ls docker-compose.test.yml docker-compose.testing.yml 2>/dev/null || echo "(no test docker-compose)"`
-
-### Schema / models (for generating seeds)
-!`find . -maxdepth 4 \( -name "schema.prisma" -o -name "*.schema.ts" -o -name "models.py" -o -name "schema.sql" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no schema files found)"`
-!`head -60 prisma/schema.prisma 2>/dev/null || echo "(no Prisma schema)"`
+- Check the dependency manifest and source files for any database or external API dependencies (to determine if C7.1 is applicable).
+- Look for mock, stub, and fixture directories and files in the test tree.
+- Look for seed scripts.
+- Look for test-specific container configuration (docker-compose for tests, Testcontainers, etc.).
+- Look for schema or model files that would be needed to generate seed data.
 
 ## Instructions
 

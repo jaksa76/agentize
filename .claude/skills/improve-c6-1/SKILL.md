@@ -14,30 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Language detection
-!`ls package.json 2>/dev/null && echo "Node/TypeScript" || true`
-!`ls pyproject.toml setup.py requirements.txt 2>/dev/null && echo "Python" || true`
-!`ls pom.xml build.gradle 2>/dev/null && echo "Java" || true`
-!`ls go.mod 2>/dev/null && echo "Go" || true`
-!`ls Cargo.toml 2>/dev/null && echo "Rust" || true`
+Examine the project to understand its current state:
 
-### Linting config
-!`ls .eslintrc .eslintrc.js .eslintrc.cjs .eslintrc.json .eslintrc.yml eslint.config.js eslint.config.mjs .prettierrc .prettierrc.js prettier.config.js 2>/dev/null || echo "(no ESLint/Prettier)"`
-!`ls .pylintrc .flake8 ruff.toml .ruff.toml 2>/dev/null || grep "\[tool.ruff\]\|\[tool.flake8\]\|\[tool.pylint\]" pyproject.toml 2>/dev/null | head -3 || echo "(no Python linting)"`
-!`ls .golangci.yml .golangci.yaml 2>/dev/null || echo "(no Go linting)"`
-!`ls .rubocop.yml 2>/dev/null || echo "(no Ruby linting)"`
-
-### Type checking
-!`ls tsconfig.json 2>/dev/null || echo "(no tsconfig)"`
-!`cat tsconfig.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); o=d.get('compilerOptions',{}); print('strict:', o.get('strict'), 'noImplicitAny:', o.get('noImplicitAny'))" 2>/dev/null || true`
-!`ls mypy.ini .mypy.ini 2>/dev/null || grep "\[tool.mypy\]" pyproject.toml 2>/dev/null | head -2 || echo "(no mypy)"`
-
-### Security scanning
-!`ls .snyk sonar-project.properties .semgrep.yml 2>/dev/null || echo "(no SAST config)"`
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -l "codeql\|snyk\|semgrep\|trivy\|bandit" 2>/dev/null | head -3 || echo "(no SAST in CI)"`
-
-### package.json scripts (for adding lint scripts)
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', list(d.get('scripts',{}).keys())); print('devDeps:', list(d.get('devDependencies',{}).keys()))" 2>/dev/null || true`
+- Identify the language and build system from the dependency manifest.
+- Look for linting and formatting configuration files (standalone files or embedded in a project config).
+- Look for type checking configuration files and check whether strict mode is enabled.
+- Look for security scanning (SAST) configuration files and CI steps.
+- Check the build scripts/Makefile to understand what quality commands already exist.
 
 ## Instructions
 

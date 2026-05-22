@@ -14,21 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Agent context and verification guidance
-!`cat CLAUDE.md 2>/dev/null || cat AGENTS.md 2>/dev/null || echo "(no agent context file)"`
+Examine the project to understand its current state:
 
-### Skills with verification steps
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "run.*test\|npm test\|pytest\|go test\|lint\|build\|verify" 2>/dev/null | head -15 || echo "(no test commands in skills)"`
-
-### Test commands available
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('scripts',{}); print({k:v for k,v in s.items() if any(x in k for x in ['test','lint','build','typecheck','check'])})" 2>/dev/null || true`
-!`grep -i "^test\b\|^lint\b\|^build\b\|^check\b" Makefile 2>/dev/null | head -10 || echo "(no Makefile quality targets)"`
-
-### CI / monitoring MCP access
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers)"`
-
-### Hooks configured
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); hooks=d.get('hooks',{}); print('Hooks:', list(hooks.keys()) if hooks else 'none')" 2>/dev/null || echo "(no hooks)"`
+- Read `CLAUDE.md` or `AGENTS.md` and look for any verification or quality-check guidance already present.
+- Check skill files in `.claude/skills/` for verification steps (build, test, lint commands).
+- Identify the available quality commands from the build manifest, Makefile, or equivalent.
+- Check the MCP server configuration for CI pipeline or monitoring access.
+- Check `.claude/settings.json` for any hooks already configured.
 
 ## Instructions
 

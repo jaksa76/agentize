@@ -21,32 +21,17 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | Agents automatically flag or report tech debt, security issues, and dependency updates, but do not open PRs to fix them |
 | 3 | Agents proactively open PRs for tech debt reduction, dependency updates, security remediations, and standards enforcement without human initiation |
 
-## Evidence
+## Evidence to Gather
 
-### Automated dependency update tooling
-!`ls .github/dependabot.yml .github/dependabot.yaml renovate.json .renovaterc renovate.json5 2>/dev/null || echo "(no Dependabot or Renovate config)"`
-!`cat .github/dependabot.yml 2>/dev/null | head -20 || cat renovate.json 2>/dev/null | head -20 || echo "(no dependency update config content)"`
-
-### Scheduled quality / security workflows
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "schedule\|codeql\|snyk\|trivy\|bandit\|dependabot\|audit\|security\|quality" 2>/dev/null | head -10 || echo "(no scheduled quality workflows)"`
-!`grep -r -B2 -A10 "schedule:" .github/workflows/ 2>/dev/null | grep -A10 "schedule:" | head -40 || echo "(no scheduled workflow details)"`
-
-### Agent-triggered quality PRs in git history
-!`git log --since="90 days ago" --format="%s %b" 2>/dev/null | grep -i "dependabot\|renovate\|security\|cve\|tech.debt\|refactor\|dependency.update\|chore.*update\|bump " | head -20 || echo "(no automated quality PRs in recent git history)"`
-!`git log --since="90 days ago" --author="dependabot\[bot\]\|renovate\[bot\]\|github-actions\[bot\]" --oneline 2>/dev/null | head -15 || echo "(no bot-authored commits)"`
-
-### Skills for proactive quality tasks
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -l -i "security\|tech.debt\|dependency\|audit\|upgrade\|renovate\|vulnerability" 2>/dev/null | head -10 || echo "(no quality-focused skills)"`
-
-### Quality reporting workflows (flag but don't fix)
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "report\|flag\|notify\|comment.*issue\|create.*issue" 2>/dev/null | head -5 || echo "(no quality reporting workflows)"`
-
-### CLAUDE.md / AGENTS.md — proactive quality instructions
-!`grep -i "security\|tech.debt\|dependency\|audit\|quality\|vulnerability\|upgrade" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no quality guidance in agent context files)"`
+- Check for Dependabot or Renovate configuration files in the `.github/` directory.
+- Look at CI workflow files for scheduled quality, security scanning, or dependency-audit workflows.
+- Check recent git history for bot-authored commits (dependabot, renovate, github-actions[bot]) that indicate automated quality fixes.
+- Look in `.claude/skills/` for skills focused on security scanning, dependency auditing, or tech-debt management.
+- Check `CLAUDE.md` or `AGENTS.md` for any proactive quality management guidance.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for A7.
+Gather the evidence described above and determine the fulfillment level for A7.
 
 Scoring guide:
 - **Level 0**: No automated quality workflows, no Dependabot/Renovate, no bot-authored quality commits, no quality-focused skills. All quality work (security reviews, dependency updates, tech debt) is initiated manually by a developer.

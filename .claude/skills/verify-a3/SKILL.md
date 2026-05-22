@@ -21,33 +21,17 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | Agents run the full test suite and linter, iterate on failures, and present only passing results to the human |
 | 3 | Agents have access to CI pipeline results, production monitoring, and MCP-connected tool outputs; verification is fully automated and includes post-deployment checks |
 
-## Evidence
+## Evidence to Gather
 
-### AGENTS.md / CLAUDE.md — documented agent verification workflow
-!`grep -i "test\|build\|verify\|check\|lint\|run\|before.*submit\|before.*pr\|validate" CLAUDE.md AGENTS.md 2>/dev/null | head -20 || echo "(no verification guidance in agent context files)"`
-
-### Skills with verification steps
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -l -i "test\|lint\|build\|verify\|check" 2>/dev/null | head -10 || echo "(no skills with verification steps found)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "run.*test\|npm test\|pytest\|go test\|cargo test\|lint\|build" 2>/dev/null | head -15 || echo "(no test/lint commands in skills)"`
-
-### Test suite presence (agents need tests to run)
-!`find . -maxdepth 5 -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no test directories)"`
-
-### CI pipeline access for agents (MCP or API)
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); ci=[k for k in mcp if any(x in k.lower() for x in ['github','gitlab','ci','pipeline','jenkins'])]; print('CI-related MCP servers:', ci if ci else 'none')" 2>/dev/null || echo "(no CI MCP servers)"`
-
-### Production monitoring access for agents
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); obs=[k for k in mcp if any(x in k.lower() for x in ['grafana','datadog','sentry','cloudwatch','log','metric','monitor','newrelic'])]; print('Monitoring MCP servers:', obs if obs else 'none')" 2>/dev/null || echo "(no monitoring MCP servers)"`
-
-### Hooks configured to run verification automatically
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); hooks=d.get('hooks',{}); print('Hooks configured:', list(hooks.keys()) if hooks else 'none')" 2>/dev/null || echo "(no hooks in settings)"`
-
-### CI workflows that agents can read results from
-!`ls .github/workflows/ 2>/dev/null && ls .github/workflows/ | head -10 || echo "(no GitHub Actions workflows)"`
+- Read `CLAUDE.md` or `AGENTS.md` and look for sections that instruct agents to run tests, linters, or other quality checks before presenting results.
+- Check the `.claude/skills/` directory — read skill files and assess whether they include verification steps (build, test, lint) before reporting results.
+- Check the MCP server configuration (`.claude/settings.json`, `.mcp.json`) for any CI pipeline or production monitoring servers that give agents programmatic access.
+- Check `.claude/settings.json` for hooks that automatically run quality checks.
+- Look for a test suite (test directories or test files) that an agent could run.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for A3.
+Gather the evidence described above and determine the fulfillment level for A3.
 
 This criterion measures the degree to which agents close their own feedback loops before handing work to a human. Look for evidence that the workflow (skills, CLAUDE.md, AGENTS.md) instructs or enables agents to verify their own output.
 

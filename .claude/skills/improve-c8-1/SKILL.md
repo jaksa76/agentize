@@ -14,30 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### CI config files
-!`ls .github/workflows/ 2>/dev/null && ls .github/workflows/ || ls .gitlab-ci.yml Jenkinsfile .circleci/ 2>/dev/null || echo "(no CI config)"`
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | head -3 | xargs head -40 2>/dev/null || cat .gitlab-ci.yml 2>/dev/null | head -40 || echo "(no workflow content)"`
+Examine the project to understand its current state:
 
-### Deployment steps
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l "deploy\|release\|publish" 2>/dev/null | head -5 || echo "(no deployment workflows)"`
-
-### workflow_dispatch triggers
-!`grep -r "workflow_dispatch" .github/workflows/ 2>/dev/null | head -5 || echo "(no workflow_dispatch)"`
-
-### MCP / agent pipeline access
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); ci=[k for k in mcp if any(x in k.lower() for x in ['github','gitlab','ci'])]; print('CI MCP servers:', ci if ci else 'none')" 2>/dev/null || echo "(no CI MCP)"`
-
-### Language / build detection
-!`ls package.json 2>/dev/null && cat package.json | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
-!`ls pyproject.toml requirements.txt 2>/dev/null && echo "Python" || true`
-!`ls pom.xml 2>/dev/null && echo "Maven/Java" || true`
-!`ls build.gradle build.gradle.kts 2>/dev/null && echo "Gradle/Java" || true`
-!`ls go.mod 2>/dev/null && echo "Go" || true`
-!`ls Cargo.toml 2>/dev/null && echo "Rust" || true`
-
-### Deployment infrastructure
-!`ls kubernetes/ k8s/ helm/ terraform/ fly.toml heroku.yml app.yaml render.yaml 2>/dev/null || echo "(no deployment config)"`
-!`ls Dockerfile 2>/dev/null && echo "(Dockerfile present)" || echo "(no Dockerfile)"`
+- Look for CI configuration files and read their content to understand the pipeline structure.
+- Check for `workflow_dispatch` or equivalent manual triggers.
+- Check the MCP server configuration for any CI/CD pipeline access.
+- Look for deployment infrastructure configuration and deployment steps in existing workflows.
+- Identify the language and build system so the CI workflow can be appropriately tailored.
 
 ## Instructions
 

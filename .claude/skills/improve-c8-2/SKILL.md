@@ -14,23 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Existing observability
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; obs=[k for k in deps if any(x in k for x in ['pino','winston','bunyan','morgan','@opentelemetry','datadog','sentry','newrelic','dd-trace'])]; print('Observability deps:', obs)" 2>/dev/null || true`
-!`grep -r "import logging\|import structlog\|loguru\|python-json-logger" --include="*.py" -l . 2>/dev/null | head -5 || echo "(no Python logging imports)"`
-!`ls datadog.yaml prometheus.yml grafana/ 2>/dev/null || echo "(no monitoring configs)"`
-!`ls sentry.client.config.ts sentry.server.config.ts sentry.config.ts 2>/dev/null || echo "(no Sentry config)"`
-!`find . -maxdepth 4 -name "otel*.yml" -o -name "opentelemetry*.yml" 2>/dev/null | head -5 || echo "(no OpenTelemetry config)"`
+Examine the project to understand its current state:
 
-### MCP observability access
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); obs=[k for k in mcp if any(x in k.lower() for x in ['grafana','datadog','sentry','monitor','metric','cloudwatch'])]; print('Observability MCP:', obs if obs else 'none')" 2>/dev/null || echo "(no observability MCP)"`
-
-### Alerting
-!`find . -maxdepth 4 \( -iname "alert*.yml" -o -iname "*.rules.yml" \) 2>/dev/null | head -5 || echo "(no alerting config)"`
-
-### Language / framework
-!`ls package.json 2>/dev/null && echo "Node" || true`
-!`ls pyproject.toml requirements.txt 2>/dev/null && echo "Python" || true`
-!`head -20 src/index.ts src/index.js src/app.ts src/app.js app/main.py main.py 2>/dev/null || echo "(no entry point found)"`
+- Check the dependency manifest for logging libraries and observability/monitoring SDKs.
+- Look for monitoring or observability configuration files anywhere in the project.
+- Check the MCP server configuration for any observability servers.
+- Look for alerting configuration files.
+- Identify the language and framework from the dependency manifest and main entry point.
 
 ## Instructions
 

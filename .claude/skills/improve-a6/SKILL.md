@@ -14,19 +14,11 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### GitHub Actions workflows (event and schedule triggers)
-!`ls .github/workflows/ 2>/dev/null | head -20 || echo "(no GitHub Actions workflows)"`
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -h "on:" 2>/dev/null | head -20 || echo "(no trigger configs)"`
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -l "schedule\|workflow_dispatch\|issues\|label" 2>/dev/null || echo "(no scheduled or event-triggered workflows)"`
+Examine the project to understand its current state:
 
-### Evidence of agent-triggering patterns
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -h -i "claude\|agent\|implement\|llm\|ai" 2>/dev/null | head -10 || echo "(no agent invocation in CI)"`
-
-### Cron / scheduled jobs
-!`find .github/workflows/ -name "*.yml" 2>/dev/null | xargs grep -h "cron:" 2>/dev/null | head -10 || echo "(no cron schedules)"`
-
-### Agent context — autonomous operation guidance
-!`grep -i "trigger\|schedule\|event\|cron\|autonomous\|initiat\|backlog" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no autonomous operation guidance)"`
+- Look at CI workflow files for their trigger types (push, schedule, issues, etc.) and check whether any invoke an agent.
+- Check for cron schedules in any workflow files.
+- Check `CLAUDE.md` or `AGENTS.md` for guidance on autonomous or scheduled agent operation.
 
 ## Instructions
 

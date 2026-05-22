@@ -14,26 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Existing requirements docs
-!`ls VISION.md REQUIREMENTS.md requirements.md GOALS.md 2>/dev/null || echo "(none at root)"`
-!`cat VISION.md 2>/dev/null || cat REQUIREMENTS.md 2>/dev/null || echo "(no vision/requirements file)"`
+Examine the project to understand its current state:
 
-### Stories / backlog directory
-!`ls -d stories/ features/ user-stories/ backlog/ 2>/dev/null || echo "(no stories directory)"`
-!`ls stories/ features/ user-stories/ backlog/ 2>/dev/null | head -20 || echo "(no files)"`
-
-### MCP server config
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers)"`
-
-### README (for inferring purpose and features)
-!`cat README.md 2>/dev/null | head -100 || echo "(no README)"`
-
-### Source code entry points (for inferring features)
-!`head -50 src/index.ts src/index.js src/main.py app/main.py main.go cmd/main.go 2>/dev/null || find . -maxdepth 3 -name "main.*" -o -name "index.*" -o -name "app.*" 2>/dev/null | grep -v node_modules | head -10 || echo "(no obvious entry points)"`
-
-### Route / endpoint detection (reveals features)
-!`find . -maxdepth 5 \( -name "*.routes.*" -o -name "*router*" -o -name "*controller*" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no route files)"`
-!`grep -r "app\.\(get\|post\|put\|delete\|patch\)\|router\.\(get\|post\)" --include="*.js" --include="*.ts" -h . 2>/dev/null | grep -v node_modules | head -20 || echo "(no route definitions found)"`
+- Look for any existing vision, requirements, or goals documents and read them.
+- Check for stories, features, or backlog directories.
+- Check the MCP server configuration for any project management tool connections.
+- Read the README and browse key source files to understand what the system does and for whom (needed to write accurate requirements from scratch if none exist).
 
 ## Instructions
 

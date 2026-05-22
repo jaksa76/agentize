@@ -20,30 +20,17 @@ Licensed clients may use and modify this material for internal business purposes
 | 1 | Project builds without errors |
 | 2 | App can be run locally or in an ephemeral environment |
 
-## Evidence
+## Evidence to Gather
 
-### Build system / language indicators
-!`ls package.json pom.xml build.gradle build.gradle.kts setup.py pyproject.toml Cargo.toml go.mod mix.exs build.sbt 2>/dev/null || echo "(no standard build manifests found)"`
-
-### package.json scripts (Node/JS projects)
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('scripts',{}); print('scripts:', list(s.keys()))" 2>/dev/null || true`
-
-### Makefile targets related to build/run
-!`grep -i "^build\b\|^run\b\|^start\b\|^serve\b\|^dev\b\|^compile\b\|^test\b" Makefile 2>/dev/null | head -15 || echo "(no Makefile or no build/run targets)"`
-
-### Run / serve configuration
-!`ls Procfile docker-compose.yml docker-compose.yaml .env.example 2>/dev/null || echo "(no Procfile, docker-compose, or .env.example)"`
-!`cat Procfile 2>/dev/null | head -10 || true`
-
-### CI evidence of builds succeeding
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l "build\|compile\|test" 2>/dev/null | head -5 || echo "(no CI workflow files with build/compile/test)"`
-
-### README build/run instructions
-!`grep -A8 -i "build\|compile\|run\|start\|serve\|launch\|docker" README.md 2>/dev/null | head -30 || echo "(no build/run keywords in README)"`
+- Identify the project's language and build system from manifest files at the root.
+- Look for build and run scripts in the build manifest, Makefile, or equivalent.
+- Check for runtime configuration that indicates the app can be launched (Procfile, docker-compose, run script, etc.).
+- Read the README for build and run instructions.
+- Look at CI workflow files for evidence that the build step succeeds.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for C5.1.
+Gather the evidence described above and determine the fulfillment level for C5.1.
 
 Scoring guide:
 - **Level 0**: The project does not build or the build system is missing/broken. Indicators: no build manifest, no build instructions, CI consistently failing on build steps (if CI exists).

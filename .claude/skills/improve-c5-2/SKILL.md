@@ -14,24 +14,13 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Test framework detection
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; tf=[k for k in deps if any(x in k for x in ['jest','mocha','vitest','jasmine','ava'])]; print('Test frameworks:', tf)" 2>/dev/null || true`
-!`ls pytest.ini pyproject.toml setup.cfg 2>/dev/null && grep -l "\[tool.pytest\]\|\[pytest\]" pyproject.toml setup.cfg 2>/dev/null || echo "(no pytest config)"`
-!`ls *.test.go *_test.go 2>/dev/null | head -5 || echo "(no Go test files at root)"`
+Examine the project to understand its current state:
 
-### Existing test files
-!`find . -maxdepth 5 -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) 2>/dev/null | grep -v node_modules | head -10`
-!`find . -maxdepth 6 \( -name "*.test.ts" -o -name "*.test.js" -o -name "*_test.py" -o -name "test_*.py" -o -name "*Test.java" \) 2>/dev/null | grep -v node_modules | head -20`
-
-### Coverage configuration
-!`cat jest.config.js jest.config.ts 2>/dev/null | grep -i "coverage\|threshold" | head -10 || echo "(no Jest coverage config)"`
-!`grep -A5 "\[tool.coverage\|fail_under\|minimum_coverage" pyproject.toml setup.cfg .coveragerc 2>/dev/null | head -15 || echo "(no Python coverage threshold)"`
-
-### Source files to test (sample)
-!`find src/ lib/ app/ -maxdepth 3 \( -name "*.ts" -o -name "*.js" -o -name "*.py" \) 2>/dev/null | grep -v "\\.test\.\|__tests__\|\.spec\." | grep -v node_modules | head -20 || echo "(no source files found in src/lib/app/)"`
-
-### Coverage report (if available)
-!`ls coverage/ htmlcov/ .coverage 2>/dev/null && echo "(coverage artifacts exist)" || echo "(no coverage run found)"`
+- Identify the test framework from the dependency manifest or framework configuration files.
+- Look for existing test directories and test files to understand what is already tested.
+- Look for coverage configuration or threshold settings.
+- Look for existing coverage reports to understand current coverage level.
+- Look at the source directories to identify untested code that needs tests.
 
 ## Instructions
 

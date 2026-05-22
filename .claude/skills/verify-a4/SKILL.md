@@ -21,38 +21,16 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | Agents implement complete features spanning multiple files, writing and running tests as part of the implementation |
 | 3 | Agents implement entire user stories end-to-end, including cross-service changes, test suites, documentation, and migration scripts |
 
-## Evidence
+## Evidence to Gather
 
-### Agent-authored commit sizes (files changed per commit)
-!`git log --since="90 days ago" --format="%H" 2>/dev/null | head -50 | while read hash; do git show --stat "$hash" 2>/dev/null | grep -i "co-authored-by\|claude\|copilot" > /dev/null 2>&1 && git show --stat "$hash" 2>/dev/null | tail -1; done | head -20 || echo "(could not compute agent commit sizes)"`
-
-### Files changed in recent agent commits (stat summary)
-!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -B5 "co-authored-by" | grep -v "^--$" | head -30 || echo "(no agent co-authored commits with context)"`
-
-### Skill definitions describing task scope
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "story\|feature\|implement\|task\|multi-file\|cross-service\|end-to-end\|migration\|documentation" 2>/dev/null | head -20 || echo "(no scope-related content in skills)"`
-
-### CLAUDE.md / AGENTS.md describing expected task granularity
-!`grep -i "story\|feature\|task\|scope\|implement\|multi-file\|cross-service\|unit\|function\|file" CLAUDE.md AGENTS.md 2>/dev/null | head -20 || echo "(no task scope guidance in agent context files)"`
-
-### Recent large multi-file agent commits (heuristic)
-!`git log --since="90 days ago" --format="%H %s" 2>/dev/null | head -100 | while read hash msg; do
-  body=$(git show --format="%B" --no-patch "$hash" 2>/dev/null)
-  if echo "$body" | grep -qi "co-authored-by\|claude\|copilot"; then
-    files=$(git show --stat "$hash" 2>/dev/null | tail -1 | grep -o "[0-9]* file" | grep -o "[0-9]*")
-    if [ -n "$files" ] && [ "$files" -ge 3 ] 2>/dev/null; then
-      echo "Multi-file agent commit ($files files): $msg"
-    fi
-  fi
-done 2>/dev/null | head -10 || echo "(no multi-file agent commits detected)"`
-
-### Task tracking files (TODO, stories, backlog)
-!`ls TODO.md BACKLOG.md stories/ tasks/ 2>/dev/null || echo "(no task tracking files)"`
-!`head -10 TODO.md 2>/dev/null || echo "(no TODO.md)"`
+- Look at agent-co-authored commits in recent git history and assess how many files each changed — this indicates the scope of tasks agents routinely handle.
+- Read skill definitions in `.claude/skills/` to understand the scope of tasks they describe (single-function fixes vs. multi-file features vs. story-level work).
+- Read `CLAUDE.md` or `AGENTS.md` for any guidance on expected task granularity.
+- Look for task tracking files (`TODO.md`, `BACKLOG.md`, `stories/`) and assess the granularity of items in them.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for A4.
+Gather the evidence described above and determine the fulfillment level for A4.
 
 This criterion measures the largest scope of work that agents routinely handle end-to-end in this project. Look for evidence in git history (file counts per agent commit), skill definitions, and CLAUDE.md/AGENTS.md guidance.
 

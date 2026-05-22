@@ -23,26 +23,16 @@ Licensed clients may use and modify this material for internal business purposes
 
 All documentation must live in-repo or be accessible via MCP to count.
 
-## Evidence
+## Evidence to Gather
 
-### Architecture-related files at root and in docs/
-!`find . -maxdepth 4 \( -iname "ARCHITECTURE.md" -o -iname "architecture.md" -o -iname "DESIGN.md" -o -iname "design.md" -o -iname "TECHNICAL.md" -o -iname "ADR.md" \) 2>/dev/null | grep -v node_modules | head -20 || echo "(none found)"`
-
-### docs/ directory contents
-!`find docs/ -name "*.md" -o -name "*.puml" -o -name "*.c4" 2>/dev/null | head -30 || echo "(no docs/ directory or no files there)"`
-
-### C4 / diagram files
-!`find . -maxdepth 5 \( -name "*.puml" -o -name "*.c4" -o -name "*.drawio" -o -name "*.mmd" \) 2>/dev/null | grep -v node_modules | head -20 || echo "(no diagram files found)"`
-
-### Architecture keywords in README
-!`grep -n -i "architecture\|c4\|container diagram\|component\|service\|context diagram\|external system\|flow\|sequence" README.md 2>/dev/null | head -20 || echo "(no architecture keywords in README)"`
-
-### Preview of primary architecture doc (if present)
-!`head -80 docs/ARCHITECTURE.md 2>/dev/null || head -80 ARCHITECTURE.md 2>/dev/null || head -80 docs/architecture.md 2>/dev/null || echo "(no primary architecture doc found)"`
+- Look for architecture documentation files at the project root and in a `docs/` directory.
+- Look for diagram files (PlantUML, C4, draw.io, Mermaid, or similar) anywhere in the project.
+- Check the README for architecture keywords or sections.
+- Read any primary architecture document to assess its depth — does it cover system context, containers/services, components, or critical flows?
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for C3.1.
+Gather the evidence described above and determine the fulfillment level for C3.1.
 
 Scoring guide:
 - **Level 0**: No architecture documentation exists in the repo — no dedicated architecture file, no architecture section in the README, no diagrams.

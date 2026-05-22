@@ -21,30 +21,16 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | + Type checking enforced |
 | 3 | + Security scanning (SAST) |
 
-## Evidence
+## Evidence to Gather
 
-### Linting / formatting config files
-!`ls .eslintrc .eslintrc.js .eslintrc.cjs .eslintrc.json .eslintrc.yml .eslintrc.yaml eslint.config.js eslint.config.mjs .prettierrc .prettierrc.js prettier.config.js 2>/dev/null || echo "(no ESLint/Prettier config)"`
-!`ls .pylintrc .flake8 ruff.toml .ruff.toml pyproject.toml 2>/dev/null | head -5 && grep -l "\[tool.ruff\]\|\[tool.flake8\]\|\[tool.pylint\]" pyproject.toml 2>/dev/null || echo "(no Python linting config)"`
-!`ls .rubocop.yml checkstyle.xml .golangci.yml .golangci.yaml 2>/dev/null || echo "(no Ruby/Java/Go linting config)"`
-
-### Linting in CI
-!`grep -r -i "eslint\|pylint\|flake8\|ruff\|rubocop\|golangci\|lint" .github/workflows/ 2>/dev/null | head -10 || echo "(no linting steps in CI)"`
-
-### Type checking config
-!`ls tsconfig.json tsconfig.*.json 2>/dev/null || echo "(no tsconfig)"`
-!`cat tsconfig.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); opts=d.get('compilerOptions',{}); print('strict:', opts.get('strict'), '| noImplicitAny:', opts.get('noImplicitAny'), '| strictNullChecks:', opts.get('strictNullChecks'))" 2>/dev/null || true`
-!`ls mypy.ini .mypy.ini 2>/dev/null || grep -l "\[tool.mypy\]" pyproject.toml setup.cfg 2>/dev/null || echo "(no mypy config)"`
-!`grep -r -i "mypy\|tsc --noEmit\|pyright\|type-check" .github/workflows/ 2>/dev/null | head -5 || echo "(no type checking in CI)"`
-
-### Security scanning (SAST)
-!`ls .snyk sonar-project.properties .semgrep.yml .semgrep/ .github/workflows/codeql*.yml 2>/dev/null || echo "(no SAST config files found)"`
-!`grep -r -i "codeql\|snyk\|semgrep\|sonar\|trivy\|bandit\|gosec\|brakeman\|safety" .github/workflows/ 2>/dev/null | head -10 || echo "(no SAST steps in CI)"`
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); deps={**d.get('dependencies',{}),**d.get('devDependencies',{})}; sec=[k for k in deps if any(x in k for x in ['snyk','sonar','semgrep'])]; print('Security deps:', sec if sec else 'none')" 2>/dev/null || true`
+- Look for linting and formatting configuration files at the project root or embedded in a project configuration file (e.g., a `[tool.ruff]` section in `pyproject.toml`).
+- Check CI workflow files for linting and formatting steps.
+- Look for type checking configuration files (tsconfig with strict settings, mypy config, Pyright config, etc.) and check whether type checking runs in CI.
+- Look for security scanning (SAST) configuration files and CI steps — check for tools like CodeQL, Snyk, Semgrep, Bandit, or similar.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for C6.1.
+Gather the evidence described above and determine the fulfillment level for C6.1.
 
 Scoring guide:
 - **Level 0**: No quality tooling of any kind — no linter config, no formatter config, no type checking, no security scanning.

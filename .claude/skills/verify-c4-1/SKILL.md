@@ -21,29 +21,17 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | User stories or acceptance criteria accessible |
 | 3 | Full programmatic access via MCP server or API |
 
-## Evidence
+## Evidence to Gather
 
-### Vision / requirements files at root
-!`ls VISION.md REQUIREMENTS.md requirements.md GOALS.md goals.md PRODUCT.md 2>/dev/null || echo "(none found)"`
-!`head -40 VISION.md 2>/dev/null || echo "(no VISION.md)"`
-
-### Requirements in docs/
-!`find docs/ -maxdepth 3 \( -iname "*requirement*" -o -iname "*vision*" -o -iname "*story*" -o -iname "*spec*" -o -iname "*acceptance*" -o -iname "*backlog*" \) 2>/dev/null | head -20 || echo "(none found in docs/)"`
-
-### Stories / features directory
-!`ls -d stories/ features/ user-stories/ backlog/ specs/ 2>/dev/null || echo "(no dedicated stories/features directory)"`
-!`ls stories/ features/ user-stories/ backlog/ 2>/dev/null | head -20 || true`
-
-### MCP server configuration (programmatic access)
-!`cat .mcp.json 2>/dev/null || cat mcp.json 2>/dev/null || echo "(no .mcp.json / mcp.json)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no .claude/settings.json or no MCP servers configured)"`
-
-### README product/purpose section
-!`grep -A10 -i "about\|overview\|purpose\|what is\|why\|goals\|features" README.md 2>/dev/null | head -30 || echo "(no purpose/overview section in README)"`
+- Look for vision or requirements files at the project root (VISION.md, REQUIREMENTS.md, GOALS.md, etc.) and read them to assess depth.
+- Check a `docs/` directory for requirement or specification documents.
+- Look for a `stories/`, `features/`, `backlog/`, or `specs/` directory with user stories or acceptance criteria.
+- Check the MCP server configuration for any connections to project management tools that would provide programmatic requirements access.
+- Read the README for a product purpose or overview section.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for C4.1.
+Gather the evidence described above and determine the fulfillment level for C4.1.
 
 Scoring guide:
 - **Level 0**: No requirements documentation exists — no README description of the product's purpose, no vision document, no user stories anywhere in the repo.

@@ -14,25 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Existing architecture docs
-!`find . -maxdepth 4 \( -iname "ARCHITECTURE.md" -o -iname "architecture.md" -o -iname "DESIGN.md" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(none)"`
-!`cat ARCHITECTURE.md 2>/dev/null || cat docs/ARCHITECTURE.md 2>/dev/null || cat docs/architecture.md 2>/dev/null || echo "(no architecture doc)"`
+Examine the project to understand its current state:
 
-### docs/ directory
-!`ls docs/ 2>/dev/null && ls docs/ || echo "(no docs/ directory)"`
-
-### Project structure (for analysis)
-!`ls -la`
-!`ls src/ lib/ app/ packages/ services/ 2>/dev/null | head -30 || echo "(no standard source directories)"`
-!`find . -maxdepth 3 -name "package.json" 2>/dev/null | grep -v node_modules | head -10 || echo "(no package.json files)"`
-
-### README (may contain architecture info)
-!`cat README.md 2>/dev/null | head -80 || echo "(no README)"`
-
-### Service / API boundary detection
-!`find . -maxdepth 4 \( -name "docker-compose.yml" -o -name "docker-compose.yaml" \) 2>/dev/null | head -5 || echo "(no docker-compose)"`
-!`cat docker-compose.yml 2>/dev/null | grep "^  [a-z]" | head -20 || echo "(no services in docker-compose)"`
-!`find . -maxdepth 3 -name "*.routes.*" -o -name "*router*" -o -name "*controller*" 2>/dev/null | grep -v node_modules | head -15 || echo "(no route/controller files)"`
+- Look for any existing architecture documentation and read it to assess the current depth.
+- Look at the project root, source directories, and any multi-service configuration (docker-compose, etc.) to understand the system structure.
+- Read the README for any architecture-related content.
+- Look for route, controller, or handler files to understand the API surface and major components.
 
 ## Instructions
 

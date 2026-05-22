@@ -14,18 +14,11 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Git co-authorship in recent history
-!`git log --since="90 days ago" --oneline 2>/dev/null | wc -l || echo "0 total"`
-!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -ic "co-authored-by\|🤖\|claude\|copilot" 2>/dev/null || echo "0 agent commits"`
-!`git log -10 --format="%s %b" 2>/dev/null | head -20 || echo "(no recent commits)"`
+Examine the project to understand its current state:
 
-### Agent context file
-!`ls CLAUDE.md AGENTS.md 2>/dev/null || echo "(none)"`
-!`grep -i "co-author\|commit\|git\|agent\|claude" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no commit guidance)"`
-
-### Git config (co-authorship setup)
-!`git config --global user.email 2>/dev/null || echo "(no git config)"`
-!`ls .git/hooks/prepare-commit-msg 2>/dev/null && echo "(prepare-commit-msg hook exists)" || echo "(no prepare-commit-msg hook)"`
+- Look at recent git history and calculate the ratio of commits with agent co-authorship markers to total recent commits.
+- Check `CLAUDE.md` or `AGENTS.md` for any guidance on co-authorship or commit conventions.
+- Check for git commit templates or hooks related to co-authorship.
 
 ## Instructions
 

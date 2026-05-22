@@ -21,33 +21,17 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | Agents participate in story generation or decomposition as a configured step in the planning workflow |
 | 3 | Agents automatically generate, refine, and decompose stories from high-level goals and participate in backlog grooming without human initiation |
 
-## Evidence
+## Evidence to Gather
 
-### Skills for planning / story generation
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -l -i "story\|planning\|backlog\|decompose\|grooming\|epic\|requirements\|generate.*task\|break.*down" 2>/dev/null | head -10 || echo "(no planning-related skills found)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "story\|planning\|backlog\|decompose\|generate.*task" 2>/dev/null | head -20 || echo "(no planning content in skills)"`
-
-### MCP servers connected to project management tools
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); pm=[k for k in mcp if any(x in k.lower() for x in ['jira','linear','github','trello','notion','asana','monday','clickup','shortcut','basecamp'])]; print('PM-related MCP servers:', pm if pm else 'none')" 2>/dev/null || echo "(no PM MCP servers in settings)"`
-!`cat .mcp.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); servers=list(d.get('mcpServers',{}).keys()); print('All MCP servers:', servers)" 2>/dev/null || echo "(no .mcp.json)"`
-
-### AGENTS.md / CLAUDE.md — planning workflow guidance
-!`grep -i "story\|planning\|backlog\|decompose\|grooming\|epic\|requirements\|sprint\|ticket\|issue" CLAUDE.md AGENTS.md 2>/dev/null | head -20 || echo "(no planning guidance in agent context files)"`
-
-### Scheduled workflows for automated story generation / backlog grooming
-!`find .github/workflows/ -name "*.yml" -o -name "*.yaml" 2>/dev/null | xargs grep -l -i "story\|backlog\|grooming\|planning\|decompose\|epic" 2>/dev/null | head -5 || echo "(no planning-related workflows)"`
-
-### Backlog / story files
-!`ls TODO.md BACKLOG.md stories/ features/ backlog/ 2>/dev/null || echo "(no backlog/story files or directories)"`
-!`head -20 TODO.md 2>/dev/null || head -20 BACKLOG.md 2>/dev/null || echo "(no backlog content)"`
-!`ls stories/ 2>/dev/null | head -10 || echo "(no stories directory)"`
-
-### Evidence of agent-generated stories in git history
-!`git log --since="90 days ago" --format="%s %b" 2>/dev/null | grep -i "story\|user story\|generate.*task\|decompose\|backlog\|planning" | head -10 || echo "(no planning-related commits in recent history)"`
+- Check `.claude/skills/` for any skills related to story generation, backlog decomposition, or planning.
+- Check the MCP server configuration (`.claude/settings.json`, `.mcp.json`) for any connections to project management tools (Jira, Linear, GitHub Issues, Trello, Notion, etc.).
+- Read `CLAUDE.md` or `AGENTS.md` for planning-related workflow guidance.
+- Look in CI workflow files for any scheduled workflows that generate stories or groom the backlog.
+- Look for backlog or story files (`TODO.md`, `BACKLOG.md`, `stories/`) and assess how granular the items are.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for A8.
+Gather the evidence described above and determine the fulfillment level for A8.
 
 Scoring guide:
 - **Level 0**: Agents play no role in planning — no planning-related skills, no PM tool MCP servers, no planning guidance in CLAUDE.md/AGENTS.md, no evidence in git history of agent involvement in story creation or backlog management.

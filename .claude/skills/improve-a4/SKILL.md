@@ -14,24 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Existing skills
-!`ls .claude/skills/ 2>/dev/null || echo "(no skills directory)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | head -20 || echo "(no skills)"`
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h "^description:" 2>/dev/null | head -20 || echo "(no skill descriptions)"`
+Examine the project to understand its current state:
 
-### CLAUDE.md task scope guidance
-!`grep -i "story\|feature\|task\|scope\|multi-file\|implement\|function\|file" CLAUDE.md AGENTS.md 2>/dev/null | head -15 || echo "(no task scope guidance)"`
-
-### Backlog / task list
-!`head -15 TODO.md 2>/dev/null || head -15 BACKLOG.md 2>/dev/null || echo "(no task list)"`
-
-### Project structure (to understand feasible task scope)
-!`ls -la`
-!`ls src/ lib/ app/ services/ packages/ 2>/dev/null | head -20 || echo "(no standard source dirs)"`
-!`cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
-
-### Recent agent commits (scope assessment)
-!`git log --since="90 days ago" --format="%B" 2>/dev/null | grep -A2 "co-authored-by\|claude\|copilot" | head -20 || echo "(no agent commits)"`
+- Check `.claude/skills/` and list existing skills with their descriptions to understand what scope they target.
+- Read `CLAUDE.md` or `AGENTS.md` for any task scope guidance.
+- Look at recent agent-co-authored commits to assess the scope of work agents currently handle.
+- Look at the project structure and any backlog/task files to understand feasible task scope.
 
 ## Instructions
 
@@ -55,10 +43,6 @@ allowed-tools: Bash Read Write Edit
 ---
 
 # Fix Bug
-
-## Context
-!`git status`
-!`git log --oneline -5`
 
 ## Instructions
 1. Read the bug description from the user's prompt carefully.
@@ -85,13 +69,9 @@ allowed-tools: Bash Read Write Edit
 
 # Implement Feature
 
-## Project Context
-!`cat CLAUDE.md 2>/dev/null | head -60 || echo "(no CLAUDE.md)"`
-!`ls src/ lib/ app/ 2>/dev/null | head -20`
-
 ## Instructions
 1. Read the feature description carefully.
-2. Read CLAUDE.md for conventions and key commands.
+2. Read CLAUDE.md for project conventions and key commands.
 3. Plan the implementation: identify which files to create/modify.
 4. Read existing code in the affected areas before making changes.
 5. Implement the feature across all necessary files.
@@ -114,10 +94,6 @@ allowed-tools: Bash Read Write Edit
 ---
 
 # Implement Story
-
-## Project Context
-!`cat CLAUDE.md 2>/dev/null | head -80`
-!`ls -la`
 
 ## Instructions
 1. Read the story description and acceptance criteria carefully.

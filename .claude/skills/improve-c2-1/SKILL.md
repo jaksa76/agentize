@@ -14,25 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Containerised environment
-!`ls .devcontainer/ devcontainer.json flake.nix shell.nix 2>/dev/null || echo "(none)"`
-!`cat .devcontainer/devcontainer.json 2>/dev/null | head -30 || echo "(no devcontainer)"`
+Examine the project to understand its current state:
 
-### Setup scripts
-!`ls setup.sh install.sh bootstrap.sh 2>/dev/null || echo "(none)"`
-!`cat setup.sh 2>/dev/null || cat install.sh 2>/dev/null || echo "(no setup script)"`
-
-### Makefile install targets
-!`grep -i "^install\b\|^setup\b\|^dev\b\|^bootstrap\b" Makefile 2>/dev/null | head -10 || echo "(none)"`
-
-### Language / dependency manager detection
-!`ls package.json 2>/dev/null && cat package.json | python3 -c "import sys,json; d=json.load(sys.stdin); print('node version:', d.get('engines',{}).get('node','unspecified')); print('scripts:', list(d.get('scripts',{}).keys()))" 2>/dev/null || true`
-!`ls requirements.txt Pipfile pyproject.toml 2>/dev/null || echo "(no Python deps)"`
-!`ls pom.xml build.gradle Cargo.toml go.mod 2>/dev/null || echo "(no other build files)"`
-!`ls Dockerfile .dockerignore 2>/dev/null || echo "(no Docker files)"`
-
-### README setup section
-!`grep -A15 -i "getting started\|quick start\|setup\|install\|prerequisites" README.md 2>/dev/null | head -30 || echo "(no setup section in README)"`
+- Check for a containerised or declarative environment (devcontainer, Nix, etc.).
+- Look for setup or install scripts and relevant Makefile targets.
+- Identify the dependency manager and installation command from the build manifest.
+- Read the README setup section to understand the current manual steps required.
 
 ## Instructions
 

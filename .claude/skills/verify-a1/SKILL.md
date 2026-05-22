@@ -21,33 +21,16 @@ Licensed clients may use and modify this material for internal business purposes
 | 2 | CLAUDE.md or AGENTS.md provides project-specific guidance: conventions, architecture overview, key commands |
 | 3 | Comprehensive agent context including architecture docs structured for agent consumption AND MCP servers exposing project knowledge (requirements, diagrams, runbooks) |
 
-## Evidence
+## Evidence to Gather
 
-### Agent context files
-!`ls CLAUDE.md AGENTS.md .claude/CLAUDE.md 2>/dev/null || echo "(none found)"`
-
-### CLAUDE.md / AGENTS.md content quality
-!`wc -l CLAUDE.md 2>/dev/null || wc -l AGENTS.md 2>/dev/null || echo "(no agent context file)"`
-!`head -80 CLAUDE.md 2>/dev/null || head -80 AGENTS.md 2>/dev/null || echo "(no content)"`
-
-### Sections in the agent context file (conventions, architecture, commands)
-!`grep -i "convention\|command\|architecture\|run\|test\|build\|structure\|navigate\|workflow" CLAUDE.md AGENTS.md 2>/dev/null | head -20 || echo "(no key sections found)"`
-
-### README presence and depth
-!`ls README.md 2>/dev/null && wc -l README.md || echo "(no README.md)"`
-!`head -30 README.md 2>/dev/null || echo "(no README)"`
-
-### MCP server configuration (programmatic project knowledge)
-!`cat .mcp.json 2>/dev/null || echo "(no .mcp.json)"`
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no .claude/settings.json or no MCP servers)"`
-
-### Architecture docs structured for agent consumption
-!`find . -maxdepth 4 \( -iname "ARCHITECTURE.md" -o -iname "architecture.md" -o -iname "DESIGN.md" \) 2>/dev/null | grep -v node_modules | head -10 || echo "(no architecture docs)"`
-!`find docs/ -name "*.md" 2>/dev/null | head -15 || echo "(no docs/ directory)"`
+- Check for agent context files (`CLAUDE.md`, `AGENTS.md`, or equivalent) at the project root and in `.claude/`. Read their content and assess depth — look for sections covering conventions, key commands, architecture overview, and navigation hints.
+- Check for a `README.md` and assess whether it gives an agent a meaningful starting point.
+- Check the MCP server configuration (`.claude/settings.json`, `.mcp.json`) for any servers that expose project knowledge such as requirements, diagrams, or runbooks.
+- Look for a `docs/` directory or architecture documentation files that are structured for agent consumption.
 
 ## Instructions
 
-Analyse the evidence above and determine the fulfillment level for A1.
+Gather the evidence described above and determine the fulfillment level for A1.
 
 Scoring guide:
 - **Level 0**: No CLAUDE.md, AGENTS.md, or equivalent exists. No README, or a README so minimal it provides no meaningful starting point.

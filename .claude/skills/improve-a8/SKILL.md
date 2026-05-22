@@ -14,22 +14,12 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Current State
 
-### Planning-related skills
-!`find .claude/skills/ -name "SKILL.md" 2>/dev/null | xargs grep -h -i "story\|backlog\|epic\|plan\|decompos\|require\|feature\|task" 2>/dev/null | head -10 || echo "(no planning skills)"`
-!`ls .claude/skills/ 2>/dev/null | grep -i "story\|plan\|backlog\|epic\|decompose\|refine" || echo "(no planning skills found)"`
+Examine the project to understand its current state:
 
-### Agent context — planning guidance
-!`grep -i "story\|backlog\|epic\|plan\|decompos\|require\|sprint\|PM\|product" CLAUDE.md AGENTS.md 2>/dev/null | head -10 || echo "(no planning guidance in context files)"`
-
-### Project management tool connections
-!`cat .claude/settings.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); mcp=d.get('mcpServers',{}); print('MCP servers:', list(mcp.keys()) if mcp else 'none')" 2>/dev/null || echo "(no MCP servers)"`
-
-### Backlog files
-!`ls TODO.md BACKLOG.md STORIES.md docs/stories/ docs/backlog/ 2>/dev/null || echo "(no backlog files found)"`
-!`head -20 TODO.md 2>/dev/null || head -20 BACKLOG.md 2>/dev/null || echo "(no backlog content)"`
-
-### Evidence of story/task structure
-!`find . -maxdepth 3 -name "*.md" 2>/dev/null | xargs grep -l "acceptance criteria\|user story\|as a.*I want\|given.*when.*then" 2>/dev/null | head -5 || echo "(no story-structured docs found)"`
+- Check `.claude/skills/` for any planning-related skills (story generation, backlog decomposition, etc.).
+- Check `CLAUDE.md` or `AGENTS.md` for planning-related guidance.
+- Check the MCP server configuration for any connections to project management tools.
+- Look for backlog or story files and assess the granularity of items.
 
 ## Instructions
 
@@ -76,11 +66,6 @@ allowed-tools: Bash Read Write Edit
 
 # Generate Story
 
-## Project Context
-!`cat CLAUDE.md 2>/dev/null | head -60 || echo "(no CLAUDE.md)"`
-!`cat VISION.md 2>/dev/null | head -40 || echo "(no VISION.md)"`
-!`head -20 TODO.md 2>/dev/null || echo "(no TODO.md)"`
-
 ## Instructions
 
 1. Read the goal or feature description from the user's prompt.
@@ -115,11 +100,6 @@ allowed-tools: Bash Read Write Edit
 ---
 
 # Decompose Epic
-
-## Project Context
-!`cat CLAUDE.md 2>/dev/null | head -60 || echo "(no CLAUDE.md)"`
-!`cat VISION.md 2>/dev/null | head -40 || echo "(no VISION.md)"`
-!`head -30 TODO.md 2>/dev/null || head -30 BACKLOG.md 2>/dev/null || echo "(no backlog)"`
 
 ## Instructions
 
