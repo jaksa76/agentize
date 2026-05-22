@@ -26,6 +26,7 @@ Licensed clients may use and modify this material for internal business purposes
 - Read `README.md` and assess whether this repository is part of a larger multi-repo setup.
 - Check for dependencies and references to other repositories in documentation, build files, or configuration files.
 - Check for any indicators of a multi-repo setup (gitmodules, symlinks, references to other repos).
+- Check if the project is a back-end for a missing front-end or vice versa. Front-end and back-end should be in the same repository for better accessibility.
 
 ## Instructions
 
