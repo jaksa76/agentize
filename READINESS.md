@@ -127,13 +127,13 @@ The degree to which an agent can verify that changes are correct and have not ca
 
 ---
 
-### C6 — Code Quality Tooling
+### C6 — Coding Guidelines
 
-The degree to which automated tools can give an agent immediate, actionable feedback on code quality.
+The degree to which the project defines and documents coding standards that guide an agent toward consistent, well-structured code.
 
-| ID | Criterion | 0 | 1 | 2 | 3 |
-|----|-----------|---|---|---|---|
-| C6.1 | Static analysis | No quality tooling | Linting and/or formatting configured | + Type checking enforced | + Security scanning (SAST) |
+| ID | Criterion | 0 | 1 | 2 |
+|----|-----------|---|---|---|
+| C6.1 | Coding guidelines | No guidance | Syntax-level standards (formatting, naming, linting rules) | Design principles and patterns (architecture rules, module boundaries, idioms) |
 
 ---
 
@@ -171,7 +171,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 | C5.1 Runnability | — | 1 | 2 | 2 |
 | C5.2 Unit test coverage | — | 1 | 2 | 3 |
 | C5.3 Integration and E2E coverage | — | — | 1 | 2 |
-| C6.1 Static analysis | — | — | 1 | 2 |
+| C6.1 Coding guidelines | — | — | 1 | 2 |
 | C7.1 Test isolation | — | — | — | 2 |
 | C8.1 CI/CD automation | — | — | 1 | 3 |
 | C8.2 Observability | — | — | — | 2 |
@@ -198,7 +198,7 @@ Architecture docs, requirements, integration tests, static analysis, CI/CD, and 
 - **C5.1 ≥ 2**: The app must be runnable locally or in an ephemeral environment so the agent can verify functional behaviour, not just compilation.
 - **C5.2 ≥ 2**: At least 50% unit-test coverage provides a meaningful regression signal. Below this threshold the agent cannot reliably detect regressions in areas it has not directly touched.
 - **C5.3 ≥ 1**: Integration tests covering key boundaries prevent the agent from breaking service contracts while making changes that appear locally correct.
-- **C6.1 ≥ 1**: Linting and formatting automation gives the agent immediate, actionable style feedback, reducing review churn and keeping the codebase consistent.
+- **C6.1 ≥ 1**: Syntax-level coding standards (formatting rules, naming conventions, linting configuration) give the agent a clear baseline for consistent, readable code without requiring human style review.
 - **C8.1 ≥ 1**: Read-only pipeline access lets the agent observe whether its changes pass CI, closing a critical feedback loop without requiring human status updates.
 
 Data isolation and full observability are not required at Level 2 because a human still oversees outcomes and can flag production-visible issues.
@@ -210,7 +210,7 @@ Data isolation and full observability are not required at Level 2 because a huma
 - **C4.1 ≥ 3**: Programmatic access to requirements via MCP server or API is required at this level because agents must pull and interpret stories independently, without a human mediating between the backlog and the agent. A developer can navigate a wiki or a ticket board; an agent operating autonomously at scale cannot do so reliably without a structured interface. C4.1 ≥ 2 (accessible user stories) is sufficient when a human briefs the agent per story; C4.1 ≥ 3 is required when the agent must access requirements on its own.
 - **C5.2 ≥ 3**: ≥80% unit-test coverage means regressions are very likely to be caught automatically rather than by a human reviewer.
 - **C5.3 ≥ 2**: End-to-end tests covering critical flows provide a system-level correctness signal. Without E2E coverage, the agent may introduce integration bugs invisible to unit tests.
-- **C6.1 ≥ 2**: Type checking (in addition to linting) catches a class of semantic errors that linting cannot, providing higher-confidence feedback before human review.
+- **C6.1 ≥ 2**: Design principles and patterns (architecture rules, module boundaries, idiomatic usage) are required so the agent can make structurally correct decisions autonomously. Without this guidance, agents default to locally plausible but architecturally inconsistent solutions that accumulate as technical debt.
 - **C7.1 ≥ 2**: Reproducible database state and vendor sandbox environments allow the agent to test data-path changes safely and consistently.
 - **C8.1 ≥ 3**: Full pipeline control including deployment is required at this level. Reflexive means agents complete the delivery cycle independently — implement, verify in CI, deploy, and observe the result — with humans providing oversight rather than per-step direction. Without deployment control (C8.1 = 2), agents can trigger CI runs but must hand off to a human to deploy, breaking the end-to-end autonomy that Level 3 describes.
 - **C8.2 ≥ 2**: Queryable monitoring and logs (structured queries, not just raw tailing) allow the agent to actively interrogate post-deployment behaviour — filtering by time window, service, or error type — rather than manually scanning raw output. At Level 3, agents must verify their own deployments without a human reading logs on their behalf.

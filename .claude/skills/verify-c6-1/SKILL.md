@@ -1,6 +1,6 @@
 ---
 name: verify-c6-1
-description: Verify readiness criterion C6.1 (Static Analysis) in the current project. Reports fulfillment level 0–3.
+description: Verify readiness criterion C6.1 (Coding Guidelines) in the current project. Reports fulfillment level 0–2.
 allowed-tools: Bash Read
 ---
 <!--
@@ -10,36 +10,33 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Verify C6.1 — Static Analysis
+# Verify C6.1 — Coding Guidelines
 
 ## Criterion Definition
 
 | Level | Description |
 |-------|-------------|
-| 0 | No quality tooling |
-| 1 | Linting and/or formatting configured |
-| 2 | + Type checking enforced |
-| 3 | + Security scanning (SAST) |
+| 0 | No guidance |
+| 1 | Syntax-level standards (formatting, naming, linting rules) |
+| 2 | Design principles and patterns (architecture rules, module boundaries, idioms) |
 
 ## Evidence to Gather
 
-- Look for linting and formatting configuration files at the project root or embedded in a project configuration file (e.g., a `[tool.ruff]` section in `pyproject.toml`).
-- Check CI workflow files for linting and formatting steps.
-- Look for type checking configuration files (tsconfig with strict settings, mypy config, Pyright config, etc.) and check whether type checking runs in CI.
-- Look for security scanning (SAST) configuration files and CI steps — check for tools like CodeQL, Snyk, Semgrep, Bandit, or similar.
+- Look for coding guideline documents in the repository: CONTRIBUTING.md, STYLE.md, docs/architecture/*, CLAUDE.md, or similar files that describe how code should be written.
+- Look for linting and formatting configuration files that encode syntax-level rules (e.g., `.eslintrc`, `.prettierrc`, `ruff.toml`, `pyproject.toml [tool.ruff]`, `.golangci.yml`).
+- Look for documents or sections that describe design principles, architectural patterns, module boundary rules, naming idioms beyond basic syntax, or other structural conventions agents should follow.
 
 ## Instructions
 
 Gather the evidence described above and determine the fulfillment level for C6.1.
 
 Scoring guide:
-- **Level 0**: No quality tooling of any kind — no linter config, no formatter config, no type checking, no security scanning.
-- **Level 1**: Linting and/or formatting is configured — an ESLint, Prettier, Ruff, pylint, or equivalent config file exists, or a linting step runs in CI. At least one of: linter config file present, linting step in CI.
-- **Level 2**: Type checking is additionally enforced — a tsconfig with strict mode or noImplicitAny, a mypy config, Pyright, or equivalent is configured. Type checking runs in CI is a strong indicator. Level 1 requirements must also be met.
-- **Level 3**: Security scanning (SAST) is additionally configured — CodeQL, Snyk, Semgrep, SonarQube, Bandit, or equivalent runs in CI or is configured as a pre-merge step. Levels 1 and 2 must also be met.
+- **Level 0**: No coding guidance of any kind — no style guides, no linting config, no contributor guidelines that address code style or structure.
+- **Level 1**: Syntax-level standards are documented or encoded — at least one of: a linting/formatting config file exists, a CONTRIBUTING.md or STYLE.md covers naming or formatting conventions, a CLAUDE.md section specifies syntax-level rules. The guidance tells an agent *how code should look* but not *how it should be structured*.
+- **Level 2**: Design principles and patterns are additionally documented — at least one of: architecture decision records, a documented module/layer structure with stated rules (e.g., "controllers must not call repositories directly"), idiomatic pattern guidance (e.g., preferred error-handling approach, preferred abstraction patterns), or a CLAUDE.md section that covers structural and design expectations. Level 1 requirements must also be met.
 
 Report in exactly this format:
 
-**C6.1 — Static Analysis**
-- **Level**: [0 / 1 / 2 / 3]
+**C6.1 — Coding Guidelines**
+- **Level**: [0 / 1 / 2]
 - **Rationale**: [one or two sentences citing the specific evidence]

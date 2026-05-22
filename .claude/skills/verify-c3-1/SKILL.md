@@ -26,9 +26,12 @@ All documentation must live in-repo or be accessible via MCP to count.
 ## Evidence to Gather
 
 - Look for architecture documentation files at the project root and in a `docs/` directory.
+- Recursively scan documentation folders to find any architecture-related files.
 - Look for diagram files (PlantUML, C4, draw.io, Mermaid, or similar) anywhere in the project.
 - Check the README for architecture keywords or sections.
 - Read any primary architecture document to assess its depth — does it cover system context, containers/services, components, or critical flows?
+- Look deeper into the documentation to find any additional files that cover different levels of architecture detail (e.g., a context diagram in the README and a detailed container diagram in `docs/architecture/`).
+- Do not assume that the presence of a single architecture file means all levels are covered — check the content to determine which levels are actually documented.
 
 ## Instructions
 

@@ -1,0 +1,1 @@
+When evaluating criteria, read previous evaluation results.
