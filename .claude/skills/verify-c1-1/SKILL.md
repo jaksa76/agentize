@@ -16,15 +16,15 @@ Licensed clients may use and modify this material for internal business purposes
 
 | Level | Description |
 |-------|-------------|
-| 0 | Code split across unlinked repos with no entry point |
-| 1 | All code reachable from a single root with a basic README |
-| 2 | Comprehensive entry-point guide (CLAUDE.md or equivalent) with conventions and navigation hints |
+| 0 | Code split across unlinked repos |
+| 1 | Repos linked through submodules or other mechanisms |
+| 2 | Monolith or Mono-repo |
 
 ## Evidence to Gather
 
 - Look at the project root structure to understand the overall layout and whether there is a single entry point.
-- Read `README.md` and assess its usefulness as a starting point for an agent or newcomer.
-- Check for `CLAUDE.md`, `AGENTS.md`, or equivalent and read their content to assess quality and depth.
+- Read `README.md` and assess whether this repository is part of a larger multi-repo setup.
+- Check for dependencies and references to other repositories in documentation, build files, or configuration files.
 - Check for any indicators of a multi-repo setup (gitmodules, symlinks, references to other repos).
 
 ## Instructions
@@ -33,8 +33,8 @@ Gather the evidence described above and determine the fulfillment level for C1.1
 
 Scoring guide:
 - **Level 0**: No single entry point; code is split across unlinked locations with no README to orient a newcomer.
-- **Level 1**: A README exists at the root and all relevant code is reachable from there. The README describes the project's purpose but does not provide agent-specific conventions or navigation guidance.
-- **Level 2**: A CLAUDE.md, AGENTS.md, or equivalent file exists and contains meaningful project-specific guidance: key commands, coding conventions, architecture overview, or navigation hints beyond what a basic README provides.
+- **Level 1**: Repos linked through submodules or other mechanisms.
+- **Level 2**: Monolith or Mono-repo.
 
 Report in exactly this format:
 
