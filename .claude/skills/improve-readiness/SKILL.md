@@ -3,6 +3,12 @@ name: improve-readiness
 description: Assess the current readiness level of the project and implement all improvements needed to raise it to the next level. Runs the relevant improve-c* logic for each blocking criterion inline.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve Readiness Level
 

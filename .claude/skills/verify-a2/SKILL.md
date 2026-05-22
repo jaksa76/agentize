@@ -3,6 +3,12 @@ name: verify-a2
 description: Verify adoption criterion A2 (Agent-Authored Contributions) in the current project. Reports fulfillment level 0–3.
 allowed-tools: Bash Read
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Verify A2 — Agent-Authored Contributions
 

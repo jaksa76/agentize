@@ -3,6 +3,12 @@ name: improve-adoption
 description: Assess the current Agent Adoption level of the project, identify which criteria block the next level, and implement improvements for each blocking criterion to raise the project to the next adoption level. Embeds all improve-a* logic inline.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve Adoption Level
 

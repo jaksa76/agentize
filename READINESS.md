@@ -225,3 +225,8 @@ C1.1 remains at ≥ 2 (same as Level 2) because a comprehensive entry-point guid
 - **Human in the loop**: Even at Level 3, humans remain in the loop. The model describes the degree of autonomy that is *possible*, not the degree that is *required* or *safe* in any given context.
 - **Relationship to adoption**: Readiness describes structural project properties; adoption describes how agents are actually used. As a rough guide: Adoption Level 1 (Vibe Coding) is viable from Readiness Level 1; Adoption Level 2 (Agentic Engineering) benefits strongly from Readiness Level 2; Adoption Levels 3 and 4 (Software Factory, Sustainable Autonomy) effectively require Readiness Level 3. See ADOPTION.md for the complementary model.
 - **Model evolution**: This is a living document. As the practice of agentic coding matures, the criteria and thresholds will be revised.
+
+
+---
+
+*Copyright (c) 2026 Codomain D.O.O. All rights reserved. Licensed under [CC BY-NC 4.0](LICENSE.md). Licensed clients may use and modify this material for internal business purposes.*

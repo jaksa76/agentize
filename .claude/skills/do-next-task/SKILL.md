@@ -3,6 +3,12 @@ name: do-next-task
 description: Pick the top task from TODO.md, implement it fully, commit and push to git, then mark it complete. Use when you want to work on the next item in the project task list.
 allowed-tools: Read Write Edit Bash
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 ## Next task to implement
 

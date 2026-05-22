@@ -266,3 +266,8 @@ A7 and A8 are not required at Level 3 because proactive quality management and p
 - **Team size**: Criteria like A5 (workflow integration) and A6 (autonomous operation) may look different in a solo project versus a team of twenty. Interpretation should be adjusted accordingly.
 - **Output quality**: This model measures what agents do and how autonomously they operate, not the quality of individual agent outputs. Quality is implicitly captured through A3 (self-verification) and A5 (CI and review integration), but teams should track agent error rates and PR rejection rates separately.
 - **Model evolution**: This is a living document. As the practice of agentic development matures, the levels and criteria will be revised.
+
+
+---
+
+*Copyright (c) 2026 Codomain D.O.O. All rights reserved. Licensed under [CC BY-NC 4.0](LICENSE.md). Licensed clients may use and modify this material for internal business purposes.*

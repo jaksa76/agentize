@@ -3,6 +3,12 @@ name: improve-c8-2
 description: Improve readiness criterion C8.2 (Observability) in the current project by adding structured logging and monitoring configuration. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve C8.2 — Observability
 

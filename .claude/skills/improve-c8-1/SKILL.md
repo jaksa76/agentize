@@ -3,6 +3,12 @@ name: improve-c8-1
 description: Improve readiness criterion C8.1 (CI/CD Automation) in the current project by creating or extending GitHub Actions workflows. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve C8.1 — CI/CD Automation
 

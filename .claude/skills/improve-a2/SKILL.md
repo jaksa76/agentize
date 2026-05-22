@@ -3,6 +3,12 @@ name: improve-a2
 description: Improve adoption criterion A2 (Agent-Authored Contributions) by setting up the tooling and guidance that enables and tracks agent contributions. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve A2 — Agent-Authored Contributions
 

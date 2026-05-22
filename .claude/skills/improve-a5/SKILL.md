@@ -3,6 +3,12 @@ name: improve-a5
 description: Improve adoption criterion A5 (Workflow Integration) by embedding agents into pull request creation, CI observation, and review processes. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve A5 — Workflow Integration
 

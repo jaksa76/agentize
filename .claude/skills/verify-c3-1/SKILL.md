@@ -3,6 +3,12 @@ name: verify-c3-1
 description: Verify readiness criterion C3.1 (Architecture Depth) in the current project. Reports fulfillment level 0–3.
 allowed-tools: Bash Read
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Verify C3.1 — Architecture Depth
 

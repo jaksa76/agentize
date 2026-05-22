@@ -68,3 +68,7 @@ Like for readiness, we can automate adoption level evalution
 ## Automated verification and enablement
 
 Similar to the readiness model, we can create a set of skills that can be used by an agent to evaluate the adoption level of a project. The agent can check for the presence of agents in the development process, the extent to which they are used, and the impact they have on productivity and quality.
+
+---
+
+*Copyright (c) 2026 Codomain D.O.O. All rights reserved. Licensed under [CC BY-NC 4.0](LICENSE.md). Licensed clients may use and modify this material for internal business purposes.*

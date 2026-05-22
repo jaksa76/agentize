@@ -3,6 +3,12 @@ name: assess-readiness
 description: Assess the Agent Readiness level of the current project across all 11 criteria (C1.1–C8.2) and produce a structured report with the achieved level, per-criterion scores, gaps, and recommendations.
 allowed-tools: Bash Read
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Agent Readiness Assessment
 

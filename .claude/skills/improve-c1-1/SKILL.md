@@ -3,6 +3,12 @@ name: improve-c1-1
 description: Improve readiness criterion C1.1 (Codebase Accessibility) in the current project by creating or enhancing the agent context file (CLAUDE.md). Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve C1.1 — Codebase Accessibility
 

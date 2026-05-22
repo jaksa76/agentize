@@ -3,6 +3,12 @@ name: improve-a6
 description: Improve adoption criterion A6 (Autonomous Operation) by creating event-triggered and scheduled GitHub Actions workflows that invoke agents without human initiation. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
+<!--
+Copyright (c) 2026 Codomain D.O.O. All rights reserved.
+Licensed under Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
+See LICENSE.md for details.
+Licensed clients may use and modify this material for internal business purposes.
+-->
 
 # Improve A6 — Autonomous Operation
 
