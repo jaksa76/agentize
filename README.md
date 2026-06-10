@@ -84,6 +84,17 @@ See [ADOPTION.md](ADOPTION.md) for full level definitions and criterion fulfillm
 
 ## Installation
 
+### Via Claude Code plugin marketplace (recommended)
+
+```
+/plugin marketplace add jaksa76/agentize
+/plugin install agentize@agentize
+```
+
+Skills are then available namespaced as `/agentize:verify-c1-1`, `/agentize:assess-readiness`, etc.
+
+### Manual install
+
 Clone the repository and copy the skills to your Claude Code skills directory.
 
 **Personal install** (skills available in all your projects):
@@ -111,3 +122,5 @@ Once installed, open any project in Claude Code and run `/assess-readiness` or `
 | `ADOPTION.md` | Full Agent Adoption Maturity Model specification. |
 | `VISION.md` | Original project vision document. |
 | `.claude/skills/` | Claude Code skills for assessing and improving readiness and adoption. |
+| `.claude-plugin/marketplace.json` | Claude Code plugin marketplace definition. |
+| `plugins/agentize/` | Packaged plugin for marketplace distribution. |

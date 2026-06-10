@@ -1,0 +1,11 @@
+{
+  "name": "agentize",
+  "displayName": "Agentize",
+  "version": "1.0.0",
+  "description": "Skills for assessing and improving agent readiness and adoption in software projects.",
+  "author": {
+    "name": "jaksa",
+    "email": "jaksa76@gmail.com"
+  },
+  "keywords": ["agent-readiness", "agentize", "verify"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "agentize",
+  "owner": {
+    "name": "jaksa",
+    "email": "jaksa76@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "agentize",
+      "source": "./plugins/agentize",
+      "description": "Skills for assessing and improving agent readiness and adoption in software projects.",
+      "author": {
+        "name": "jaksa"
+      }
+    }
+  ]
+}
