@@ -12,6 +12,8 @@ Licensed clients may use and modify this material for internal business purposes
 
 # Improve A1 — Agent Context Availability
 
+> **This skill owns agent context files.** Creating or enriching `README.md`, `CLAUDE.md`, and `AGENTS.md` for agent consumption belongs to A1, not to readiness criterion C1.1. C1.1 (Codebase Accessibility) measures whether the project's code is consolidated or technically linked across repositories, and `/improve-c1-1` consolidates repositories rather than writing context files. If you came here from C1.1 looking for context-file generation, this is the right skill.
+
 ## Current State
 
 Examine the project to understand its current state:
