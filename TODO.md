@@ -1,2 +1,4 @@
-When evaluating criteria, read previous evaluation results
-C1.1 still evaluates to L1 even for disconnected repos
+- [ ] When evaluating criteria, read previous evaluation results
+- [ ] C1.1 still evaluates to L1 even for disconnected repos
+- [ ] add language specific test detection to verify-c5-2
+- [ ] 
