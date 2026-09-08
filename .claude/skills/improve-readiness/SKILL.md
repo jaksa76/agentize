@@ -39,7 +39,7 @@ Follow the `/assess-readiness` skill to score all 11 criteria and determine the 
 | C5.1 Runnability | ≥ 1 | ≥ 2 | ≥ 2 |
 | C5.2 Unit Test Coverage | ≥ 1 | ≥ 2 | ≥ 3 |
 | C5.3 Integration and E2E Coverage | — | ≥ 1 | ≥ 2 |
-| C6.1 Static Analysis | — | ≥ 1 | ≥ 2 |
+| C6.1 Coding Guidelines | — | ≥ 1 | ≥ 2 |
 | C7.1 Test Isolation | — | — | ≥ 2 (skip if N/A) |
 | C8.1 CI/CD Automation | — | ≥ 1 | ≥ 3 |
 | C8.2 Observability | — | — | ≥ 2 |

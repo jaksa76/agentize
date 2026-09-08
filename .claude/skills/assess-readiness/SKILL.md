@@ -29,7 +29,7 @@ For each criterion, read the corresponding skill file and follow its evidence-ga
 - **C5.1 Runnability** — follow the `/verify-c5-1` skill
 - **C5.2 Unit Test Coverage** — follow the `/verify-c5-2` skill
 - **C5.3 Integration and E2E Coverage** — follow the `/verify-c5-3` skill
-- **C6.1 Static Analysis** — follow the `/verify-c6-1` skill
+- **C6.1 Coding Guidelines** — follow the `/verify-c6-1` skill
 - **C7.1 Test Isolation** — follow the `/verify-c7-1` skill
 - **C8.1 CI/CD Automation** — follow the `/verify-c8-1` skill
 - **C8.2 Observability** — follow the `/verify-c8-2` skill
@@ -84,7 +84,7 @@ Level names: 0 = Uninstrumented, 1 = Foundation, 2 = Guided Autonomy, 3 = Superv
 | C5.1 | Runnability | [score] | 2 |
 | C5.2 | Unit Test Coverage | [score] | 3 |
 | C5.3 | Integration and E2E Coverage | [score] | 3 |
-| C6.1 | Static Analysis | [score] | 3 |
+| C6.1 | Coding Guidelines | [score] | 2 |
 | C7.1 | Test Isolation | [score or N/A] | 2 |
 | C8.1 | CI/CD Automation | [score] | 3 |
 | C8.2 | Observability | [score] | 3 |
