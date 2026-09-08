@@ -25,10 +25,26 @@ Note: Level 3 (UI visual regression) may be omitted for projects without a UI �
 
 ## Evidence to Gather
 
-- Look for integration test directories or files (directories or files with "integration" in the name, or tests that reference real databases/APIs).
-- Look among the configuration files and dependency manifests for any sign of E2E or browser testing tools.
-- Look for E2E test directories and files.
-- Look for visual regression testing configuration, snapshot directories, or visual testing dependencies.
+### Integration and E2E test discovery
+
+Integration and E2E tests are frequently separated from unit tests by directory, source set, or annotation rather than by filename. Search every convention that applies to the languages present in the repository — finding no `integration/` directory is not evidence that integration tests are absent.
+
+| Language | Where integration and E2E tests live |
+|---|---|
+| Java / Kotlin | `src/integrationTest/java/` (and the Gradle `integrationTest` source set that declares it); classes annotated `@SpringBootTest`, `@IntegrationTest`, `@Testcontainers`, `@QuarkusIntegrationTest`; packages named `integration` or `apitest`; Failsafe-bound `*IT.java` / `*ITCase.java` files |
+| JavaScript / TypeScript | `test/integration/`, `e2e/`, `cypress/`, `playwright/`; `playwright.config.*`, `cypress.config.*`, `wdio.conf.*`; Jest projects or configs scoped to an integration test match pattern |
+| Python | `tests/integration/`, `tests/e2e/`; pytest markers such as `@pytest.mark.integration` or `@pytest.mark.e2e` and their declarations in `pytest.ini` / `pyproject.toml`; `conftest.py` fixtures that start a database or HTTP server |
+| Go | build-tagged files (`//go:build integration`) and `TestMain` setups that start external services |
+| Generic fallback | any directory or file whose name contains `integration`, `e2e`, `api-test`, or `apitest`, at any depth |
+
+- Look among the configuration files and dependency manifests for any sign of E2E or browser testing tools (Cypress, Playwright, Selenium, WebdriverIO, Puppeteer, REST Assured, Karate, Supertest).
+- Distinguish an integration test from an E2E test by what it exercises: an integration test crosses one boundary (a real database, a real HTTP endpoint, a message broker); an E2E test drives a critical user flow through the running application end to end.
+- Confirm the tests found are actually wired into a runnable task or CI job — a directory of test files with no way to execute them is weaker evidence than a configured, invoked suite.
+
+### Visual regression evidence
+
+- Look for visual regression configuration and dependencies (Percy, Chromatic, Applitools, BackstopJS, `jest-image-snapshot`, Playwright `toHaveScreenshot`).
+- Look for committed snapshot or baseline image directories (`__image_snapshots__/`, `__snapshots__/` containing images, `cypress/snapshots/`, `playwright/*-snapshots/`).
 
 ## Instructions
 

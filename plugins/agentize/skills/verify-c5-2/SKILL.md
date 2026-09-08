@@ -23,12 +23,36 @@ Licensed clients may use and modify this material for internal business purposes
 
 ## Evidence to Gather
 
-- Look for test directories and test files to assess whether tests exist and estimate their volume relative to the codebase.
-- Look for coverage configuration or threshold settings in the test framework configuration files.
-- Check for existing coverage report artifacts (coverage directories, lcov files, etc.).
+### Test discovery
+
+Search for unit tests using the conventions of the detected language. Absence of tests in one convention is not evidence of absence — check every convention that applies to the languages present in the repository.
+
+| Language | Where unit tests live |
+|---|---|
+| Java / Kotlin | `src/test/java/`, `src/test/kotlin/` (also per-module: `*/src/test/java/`) |
+| JavaScript / TypeScript | `__tests__/` directories, `*.test.*` and `*.spec.*` files |
+| Python | `tests/` directories, `test_*.py` and `*_test.py` files |
+| Go | `*_test.go` files, alongside the code they test |
+| Generic fallback | directories named `test`, `tests`, `spec`, or `specs` at any depth |
+
+Assess the volume of the tests found relative to the size of the codebase (file counts, test-function counts, lines of test code versus lines of production code).
+
+### Coverage evidence
+
+Look for coverage configuration and coverage reports. Common forms:
+
+- **Java / Kotlin** — JaCoCo configuration in `pom.xml` or `build.gradle(.kts)` (the `jacoco` plugin, `jacocoTestCoverageVerification` rules and limits), and reports at `target/site/jacoco/`, `build/reports/jacoco/`, `jacoco.xml`, or `jacocoTestReport.xml`. Other JVM tools: Cobertura, Kover.
+- **JavaScript / TypeScript** — Jest configuration (`jest.config.*` or the `jest` key in `package.json`) including `collectCoverage` and `coverageThreshold`; Vitest `coverage` config; nyc/istanbul `.nycrc`.
+- **Python** — `pytest.ini`, `setup.cfg`, `tox.ini`, or `pyproject.toml` sections for `[tool.pytest.ini_options]`, `[tool.coverage.*]`, or a `.coveragerc`; `--cov` flags in the test command; `fail_under` thresholds.
+- **Go** — `-coverprofile` flags in build scripts or CI, and the resulting `coverage.out`.
+- **Language-agnostic artifacts** — LCOV files (`lcov.info`, `coverage.lcov`), `coverage/`, `htmlcov/`, or `coverage-final.json` directories and files; `cobertura.xml`; coverage upload steps in CI (Codecov, Coveralls, SonarQube) and any thresholds configured there.
+
+An enforced threshold (a build that fails below N%) is stronger evidence than a generated report, which is in turn stronger than configuration that merely enables coverage collection.
+
+### Running the tests
+
 - If the project has a devcontainer or similar, attempt to run unit tests with coverage within that environment to validate the evidence.
 - If the app doesn't have a devcontainer, attempt to execute the unit tests within a suitable container, but not on the host machine.
-
 
 ## Instructions
 
