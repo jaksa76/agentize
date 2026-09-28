@@ -43,6 +43,8 @@ Scoring guide:
 - **Level 1**: In-code mocks, stubs, or basic fixtures exist — mock objects, stub files, fixture JSON, or mocking libraries (sinon, nock, unittest.mock) are used in tests to isolate from external systems. No reproducible DB state is required.
 - **Level 2**: Reproducible database state via seed scripts (prisma seed, SQL seed files, factory-boy, etc.) AND/OR vendor sandbox environments (Testcontainers, LocalStack, docker-compose for test DBs, or vendor-provided sandbox endpoints) are in use. Both the data and the external system boundary are controlled.
 
+If the project is composed of multiple services, evaluate each service in a separate context using subagents if available and then aggregate and weight the results.
+
 Report in exactly this format:
 
 **C7.1 — Test Isolation**

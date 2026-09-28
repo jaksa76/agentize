@@ -42,6 +42,8 @@ Scoring guide:
 
 If you cannot run the unit tests or no coverage reports or thresholds exist, estimate based on the number of test files relative to the overall codebase size. Err toward a lower level when uncertain.
 
+If the project is composed of multiple services/repositories, evaluate each one in a separate context using subagents if available and then aggregate and weight the results.
+
 Report in exactly this format:
 
 **C5.2 — Unit Test Coverage**
