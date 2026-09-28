@@ -1,6 +1,6 @@
 ---
 name: improve-readiness
-description: Assess the current readiness level of the project and implement all improvements needed to raise it to the next level. Delegates to /assess-readiness for scoring and to the relevant /improve-c* skills for each blocking criterion.
+description: Assess the current readiness level of the project and implement all improvements needed to raise it to the next level. Delegates to /agentize:assess-readiness for scoring and to the relevant /improve-c* skills for each blocking criterion.
 allowed-tools: Bash Read Write Edit
 ---
 <!--
@@ -20,7 +20,7 @@ This skill assesses the current readiness level, identifies which criteria block
 
 ### Step 1 — Assess current readiness level
 
-Follow the `/assess-readiness` skill to score all 11 criteria and determine the current readiness level. Record all criterion scores.
+Follow the `/agentize:assess-readiness` skill to score all 11 criteria and determine the current readiness level. Record all criterion scores.
 
 ---
 

@@ -96,7 +96,7 @@ To reach Level [N+1] ([Name]), improve:
 - Adoption 2: Readiness 2+ recommended
 - Adoption 3–4: Readiness 3 required
 
-If the project's readiness level is known, note whether it supports the adoption level. If readiness is unknown, recommend running `/assess-readiness`.]
+If the project's readiness level is known, note whether it supports the adoption level. If readiness is unknown, recommend running `/agentize:assess-readiness`.]
 
 ## Recommendations
 

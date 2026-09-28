@@ -31,16 +31,19 @@ All documentation must live in-repo or be accessible via MCP to count.
 - Read any primary architecture document to assess its depth — does it cover system context, containers/services, components, or critical flows?
 - Look deeper into the documentation to find any additional files that cover different levels of architecture detail (e.g., a context diagram in the README and a detailed container diagram in `docs/architecture/`).
 - Do not assume that the presence of a single architecture file means all levels are covered — check the content to determine which levels are actually documented.
+- Evaluate how much of the project is covered by the existing documentation and how much is missing.
 
 ## Instructions
 
 Gather the evidence described above and determine the fulfillment level for C3.1.
 
 Scoring guide:
-- **Level 0**: No architecture documentation exists in the repo — no dedicated architecture file, no architecture section in the README, no diagrams.
-- **Level 1**: System-context level documentation exists: who the users are, what external systems interact with this project, and the high-level purpose. A README paragraph or a simple context diagram qualifies.
-- **Level 2**: Container or service-level documentation exists — shows the major services, processes, or containers that make up the system and how they interact (e.g., a C4 container diagram, a services overview, API boundary docs).
-- **Level 3**: Component-level documentation exists (internal structure of individual services/containers) AND critical flows or sequence diagrams are documented (e.g., key request paths, authentication flow, data pipeline).
+- **Level 0**: No or very little architecture documentation exists in the repo — no dedicated architecture file, no architecture section in the README, no diagrams.
+- **Level 1**: System-context level documentation is fairly complete: who the users are, what external systems interact with this project, and the high-level purpose. A README paragraph or a simple context diagram qualifies.
+- **Level 2**: Container or service-level documentation is fairly complete — shows the major services, processes, or containers that make up the system and how they interact (e.g., a C4 container diagram, a services overview, API boundary docs).
+- **Level 3**: Component-level documentation is fairly complete (internal structure of individual services/containers) AND critical flows or sequence diagrams are documented (e.g., key request paths, authentication flow, data pipeline).
+
+If the project is composed of multiple services, evaluate each service in a separate context using subagents if available and then aggregate and weight the results.
 
 Report in exactly this format:
 
