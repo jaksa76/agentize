@@ -27,7 +27,8 @@ Licensed clients may use and modify this material for internal business purposes
 - Check for runtime configuration that indicates the app can be launched (Procfile, docker-compose, run script, etc.).
 - Read the README for build and run instructions.
 - If the project has a devcontainer or similar, attempt to build and run the app locally within that environment to validate the evidence.
-- If the app doesn't have a devcontainer but has a build and run script, attempt to execute those within a suitable container, but not on the host machine.
+- If the app doesn't have a devcontainer but has a build and run script, attempt to execute those within a suitable container.
+- If the app has neither a devcontainer nor a build and run script, attempt to run it using the instructions provided in the README or other documentation.
 
 
 ## Instructions
@@ -44,3 +45,12 @@ Report in exactly this format:
 **C5.1 — Runnability**
 - **Level**: [0 / 1 / 2]
 - **Rationale**: [one or two sentences citing the specific evidence]
+
+## Distributed Systems
+
+If the project is a distributed system determine whether it is a true microservice architecture — multiple independent services that can be built and run separately or whether it is a monolithic system split into multiple deployable units. Typical indicators of a distributed monolith are a shared database, services invoking each other synchronously, and tight coupling between service deployments.
+
+For a microservice architecture, the level should reflect the ability to build and run each service independently. If all services can be built and run separately, the project can achieve Level 2. If only some services can be run independently or there are significant build/run issues, the level may be lower.
+
+For a distributed monolith achieving level 2 requires running ALL services together successfully, as the tight coupling between services means they cannot be run independently. This is because lacking one service may hinder the agent from testing the overall system functionality. Do not consider the project Level 2 if any service fails to run.
+
