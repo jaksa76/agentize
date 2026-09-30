@@ -18,6 +18,14 @@ This skill generates unit tests for untested or under-tested code in the current
 
 If the project is a multi-repository setup, perform the above in each repository independently using subagents. This step is not necessary for repos that do not contain code (e.g. infrastructure, documentation, etc.).
 
+## Execution environment
+
+Run all test and coverage commands (installing dependencies, measuring coverage, running the generated tests) in a devcontainer when the project has one (`.devcontainer/devcontainer.json`), not on the host machine.
+- First check whether you are already running inside a devcontainer (e.g. `REMOTE_CONTAINERS` or `CODESPACES` environment variable set, or `/.dockerenv` present). If so, run commands directly.
+- Otherwise, start the devcontainer with `devcontainer up --workspace-folder <repo>` and run commands with `devcontainer exec --workspace-folder <repo> <command>`.
+- If the project has no devcontainer, run the commands in a suitable container image for the project's language/runtime instead of on the host.
+- In a multi-repository setup, determine this for each repository separately.
+
 ## Step 1 - Evaluate situation
 - Check for existing test framework and configuration.
 - identify any existing patterns used in the tests (naming conventions, test structure, helper functions, fixtures, mocking strategies, etc.)
