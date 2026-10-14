@@ -1,2 +1,1 @@
-- [ ] When evaluating criteria, read previous evaluation results
-- [ ] C1.1 still evaluates to L1 even for disconnected repos
+- [ ] TODO-042 rename skills to more intuitive names
