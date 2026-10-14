@@ -26,25 +26,25 @@ Follow the `/agentize:assess-readiness` skill to score all 11 criteria and deter
 
 ### Step 2 — Identify the target level and blocking criteria
 
-- If current level is 3: Report "This project is already at Level 3 — Supervised Autonomy. No further readiness improvements are possible." Stop here.
+- If current level is 3: Report "This project is already at Level 3 — Reflexive. No further readiness improvements are possible." Stop here.
 - Otherwise, target level = current level + 1.
 - Using the table below, list every criterion where the score is below the target level's threshold. These are the **blocking criteria**.
 
 | Criterion | Level 1 requires | Level 2 requires | Level 3 requires |
 |-----------|-----------------|-----------------|-----------------|
 | C1.1 Codebase Accessibility | ≥ 1 | ≥ 2 | ≥ 2 |
-| C2.1 Setup Automation | ≥ 1 | ≥ 2 | ≥ 3 |
-| C3.1 Architecture Depth | — | ≥ 1 | ≥ 3 |
-| C4.1 Requirements Access | — | ≥ 1 | ≥ 3 |
+| C2.1 DevEnv Setup Automation | ≥ 1 | ≥ 2 | ≥ 3 |
+| C3.1 Documentation Depth | — | ≥ 1 | ≥ 3 |
+| C4.1 Requirements Accessibility | — | ≥ 1 | ≥ 3 |
 | C5.1 Runnability | ≥ 1 | ≥ 2 | ≥ 2 |
 | C5.2 Unit Test Coverage | ≥ 1 | ≥ 2 | ≥ 3 |
-| C5.3 Integration and E2E Coverage | — | ≥ 1 | ≥ 2 |
-| C6.1 Static Analysis | — | ≥ 1 | ≥ 2 |
+| C5.3 Integration and E2E Test Maturity | — | ≥ 1 | ≥ 2 |
+| C6.1 Coding Guidelines | — | ≥ 1 | ≥ 2 |
 | C7.1 Test Isolation | — | — | ≥ 2 (skip if N/A) |
 | C8.1 CI/CD Automation | — | ≥ 1 | ≥ 3 |
 | C8.2 Observability | — | — | ≥ 2 |
 
-Level names: 0 = Uninstrumented, 1 = Foundation, 2 = Guided Autonomy, 3 = Supervised Autonomy
+Level names: 0 = Uninstrumented, 1 = Disconnected, 2 = Connected, 3 = Reflexive
 
 ---
 

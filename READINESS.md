@@ -81,27 +81,27 @@ The degree to which an agent can see, navigate, and orient itself within the cod
 
 | ID | Criterion | 0 | 1 | 2 |
 |----|-----------|---|---|---|
-| C1.1 | Codebase accessibility | Code split across unlinked repos | Repos linked through submodules or other mechanisms | Monolith or Mono-repo |
+| C1.1 | Codebase Accessibility | Code split across unlinked repos | Repos linked through submodules or other mechanisms | Monolith or Mono-repo |
 
 ---
 
-### C2 — Development Environment Reproducibility
+### C2 — DevEnv Reproducibility
 
-The degree to which an agent can set up a working development environment without human intervention.
+The degree to which an agent can set up a working development environment (DevEnv) without human intervention.
 
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
-| C2.1 | Setup automation | No setup instructions | Written step-by-step instructions | Single script installs all dependencies | Containerised environment (devcontainer, Nix, etc.) |
+| C2.1 | DevEnv Setup Automation | No setup instructions | Written step-by-step instructions | Single script installs all dependencies | Containerised environment (devcontainer, Nix, etc.) |
 
 ---
 
-### C3 — Architecture Documentation
+### C3 — Documentation
 
 The degree to which an agent can understand the structure, boundaries, and responsibilities of the system. All documentation must live in-repo (or be accessible via MCP) to count.
 
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
-| C3.1 | Architecture depth | No in-repo architecture docs | System context documented (users, external systems) | Container/service level documented | Component level documented + critical flows documented |
+| C3.1 | Documentation Depth | No in-repo architecture docs | System context documented (users, external systems) | Container/service level documented | Component level documented + critical flows documented |
 
 ---
 
@@ -111,7 +111,7 @@ The degree to which an agent can understand what the system is supposed to do an
 
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
-| C4.1 | Requirements access | No documented requirements | Product vision and goals documented | User stories or acceptance criteria accessible | Full programmatic access (comments refinement) via MCP server or API |
+| C4.1 | Requirements Accessibility | No documented requirements | Product vision and goals documented | User stories or acceptance criteria accessible | Full programmatic access (comments refinement) via MCP server or API |
 
 ---
 
@@ -122,8 +122,8 @@ The degree to which an agent can verify that changes are correct and have not ca
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
 | C5.1 | Runnability | Project does not build | Project builds without errors | App can be run locally or in an ephemeral environment | — |
-| C5.2 | Unit test coverage | No unit tests | Some tests present (<50% coverage) | ≥50% coverage | ≥80% coverage |
-| C5.3 | Integration and E2E coverage | No automated integration or E2E tests | Integration tests cover key boundaries | E2E tests cover critical flows | E2E + screenshots (if UI present) |
+| C5.2 | Unit Test Coverage | No unit tests | Some tests present (<50% coverage) | ≥50% coverage | ≥80% coverage |
+| C5.3 | Integration and E2E Test Maturity | No automated integration or E2E tests | Integration tests cover key boundaries | E2E tests cover critical flows | E2E + screenshots (if UI present) |
 
 ---
 
@@ -133,7 +133,7 @@ The degree to which the project defines and documents coding standards that guid
 
 | ID | Criterion | 0 | 1 | 2 |
 |----|-----------|---|---|---|
-| C6.1 | Coding guidelines | No guidance | Syntax-level standards (formatting, naming, linting rules) | Design principles and patterns (architecture rules, module boundaries, idioms) |
+| C6.1 | Coding Guidelines | No guidance | Syntax-level standards (formatting, naming, linting rules) | Design principles and patterns (architecture rules, module boundaries, idioms) |
 
 ---
 
@@ -143,7 +143,7 @@ The degree to which an agent can work with realistic data and test integrations 
 
 | ID | Criterion | 0 | 1 | 2 |
 |----|-----------|---|---|---|
-| C7.1 | Test isolation (if applicable) | No isolation from external systems or data | In-code mocks/stubs and basic fixtures | Reproducible DB state via seed scripts + sandbox environments from vendors |
+| C7.1 | Test Isolation (if applicable) | No isolation from external systems or data | In-code mocks/stubs and basic fixtures | Reproducible DB state via seed scripts + sandbox environments from vendors |
 
 ---
 
@@ -153,7 +153,7 @@ The degree to which an agent can deploy, monitor, and verify changes in producti
 
 | ID | Criterion | 0 | 1 | 2 | 3 |
 |----|-----------|---|---|---|---|
-| C8.1 | CI/CD automation | No access to pipeline | Agents can read pipeline status | Agents can trigger pipeline runs | Full pipeline control including deployment |
+| C8.1 | CI/CD Automation | No access to pipeline | Agents can read pipeline status | Agents can trigger pipeline runs | Full pipeline control including deployment |
 | C8.2 | Observability | No access to logs or metrics | Read-only access to logs/metrics | Queryable monitoring and logs | Automated anomaly detection and alerting |
 
 ---
@@ -164,16 +164,16 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 
 | Criterion | Level 0 | Level 1 | Level 2 | Level 3 |
 |-----------|---------|---------|---------|---------|
-| C1.1 Codebase accessibility | — | 1 | 2 | 2 |
-| C2.1 Setup automation | — | 1 | 2 | 3 |
-| C3.1 Architecture depth | — | — | 1 | 3 |
-| C4.1 Requirements access | — | — | 1 | 3 |
+| C1.1 Codebase Accessibility | — | 1 | 2 | 2 |
+| C2.1 DevEnv Setup Automation | — | 1 | 2 | 3 |
+| C3.1 Documentation Depth | — | — | 1 | 3 |
+| C4.1 Requirements Accessibility | — | — | 1 | 3 |
 | C5.1 Runnability | — | 1 | 2 | 2 |
-| C5.2 Unit test coverage | — | 1 | 2 | 3 |
-| C5.3 Integration and E2E coverage | — | — | 1 | 2 |
-| C6.1 Coding guidelines | — | — | 1 | 2 |
-| C7.1 Test isolation | — | — | — | 2 |
-| C8.1 CI/CD automation | — | — | 1 | 3 |
+| C5.2 Unit Test Coverage | — | 1 | 2 | 3 |
+| C5.3 Integration and E2E Test Maturity | — | — | 1 | 2 |
+| C6.1 Coding Guidelines | — | — | 1 | 2 |
+| C7.1 Test Isolation | — | — | — | 2 |
+| C8.1 CI/CD Automation | — | — | 1 | 3 |
 | C8.2 Observability | — | — | — | 2 |
 
 ### Rationale
@@ -187,7 +187,7 @@ Minimum fulfillment levels required to attain each readiness level. A project mu
 - **C5.1 ≥ 1**: The project must build. Compilation errors are the most fundamental feedback loop — without them, every agent change may silently break the build.
 - **C5.2 ≥ 1**: At least some unit tests must exist to give the agent a basic correctness signal. Zero tests means the agent gets no feedback beyond "it compiled."
 
-Architecture docs, requirements, integration tests, static analysis, CI/CD, and observability are not required at Level 1 because a human micromanages each step and can provide this context manually.
+Architecture docs, requirements, integration tests, coding guidelines, CI/CD, and observability are not required at Level 1 because a human micromanages each step and can provide this context manually.
 
 **Level 2 — Connected** requires enough context and feedback for an agent to plan and execute multi-step tasks independently:
 

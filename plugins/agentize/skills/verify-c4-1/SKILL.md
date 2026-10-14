@@ -1,6 +1,6 @@
 ---
 name: verify-c4-1
-description: Verify readiness criterion C4.1 (Requirements Access) in the current project. Reports fulfillment level 0–3.
+description: Verify readiness criterion C4.1 (Requirements Accessibility) in the current project. Reports fulfillment level 0–3.
 allowed-tools: Bash Read
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Verify C4.1 — Requirements Access
+# Verify C4.1 — Requirements Accessibility
 
 ## Criterion Definition
 
@@ -41,6 +41,6 @@ Scoring guide:
 
 Report in exactly this format:
 
-**C4.1 — Requirements Access**
+**C4.1 — Requirements Accessibility**
 - **Level**: [0 / 1 / 2 / 3]
 - **Rationale**: [one or two sentences citing the specific evidence]

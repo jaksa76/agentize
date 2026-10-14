@@ -1,6 +1,6 @@
 ---
 name: improve-c5-3
-description: Improve readiness criterion C5.3 (Integration and E2E Coverage) in the current project by adding integration or E2E test infrastructure. Raises the fulfillment level by one step.
+description: Improve readiness criterion C5.3 (Integration and E2E Test Maturity) in the current project by adding integration or E2E test infrastructure. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Improve C5.3 — Integration and E2E Coverage
+# Improve C5.3 — Integration and E2E Test Maturity
 
 ## Current State
 

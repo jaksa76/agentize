@@ -1,6 +1,6 @@
 ---
 name: verify-c2-1
-description: Verify readiness criterion C2.1 (Setup Automation) in the current project. Reports fulfillment level 0–3.
+description: Verify readiness criterion C2.1 (DevEnv Setup Automation) in the current project. Reports fulfillment level 0–3.
 allowed-tools: Bash Read Write
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Verify C2.1 — Setup Automation
+# Verify C2.1 — DevEnv Setup Automation
 
 ## Criterion Definition
 
@@ -41,6 +41,6 @@ Scoring guide:
 
 Report in exactly this format:
 
-**C2.1 — Setup Automation**
+**C2.1 — DevEnv Setup Automation**
 - **Level**: [0 / 1 / 2 / 3]
 - **Rationale**: [one or two sentences citing the specific evidence]

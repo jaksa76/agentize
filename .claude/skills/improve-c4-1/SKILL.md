@@ -1,6 +1,6 @@
 ---
 name: improve-c4-1
-description: Improve readiness criterion C4.1 (Requirements Access) in the current project by generating vision and user story documentation. Raises the fulfillment level by one step.
+description: Improve readiness criterion C4.1 (Requirements Accessibility) in the current project by generating vision and user story documentation. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Improve C4.1 — Requirements Access
+# Improve C4.1 — Requirements Accessibility
 
 ## Current State
 

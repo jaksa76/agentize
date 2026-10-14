@@ -1,6 +1,6 @@
 ---
 name: improve-c3-1
-description: Improve readiness criterion C3.1 (Architecture Depth) in the current project by generating architecture and design documentation.
+description: Improve readiness criterion C3.1 (Documentation Depth) in the current project by generating architecture and design documentation.
 allowed-tools: Bash Read Write Edit
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Improve C3.1 — Architecture Depth
+# Improve C3.1 — Documentation Depth
 
 Preparation: Determine if this is a monolith project or a microservice/multirepo setup.
 

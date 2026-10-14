@@ -1,6 +1,6 @@
 ---
 name: verify-c5-3
-description: Verify readiness criterion C5.3 (Integration and E2E Coverage) in the current project, including whether the tests are maintained, actually run, and cover the critical flows. Reports fulfillment level 0–3.
+description: Verify readiness criterion C5.3 (Integration and E2E Test Maturity) in the current project, including whether the tests are maintained, actually run, and cover the critical flows. Reports fulfillment level 0–3.
 allowed-tools: Bash Read
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Verify C5.3 — Integration and E2E Coverage
+# Verify C5.3 — Integration and E2E Test Maturity
 
 ## Criterion Definition
 
@@ -91,6 +91,6 @@ The 6-month and percentage thresholds are guidance. If the evidence points clear
 
 Report in exactly this format:
 
-**C5.3 — Integration and E2E Coverage**
+**C5.3 — Integration and E2E Test Maturity**
 - **Level**: [0 / 1 / 2 / 3]
 - **Rationale**: [two or three sentences citing the specific evidence: the experimental result (executed/passed/failed, or what blocked the run), when the suite was last really changed and whether CI runs it, and the share of boundaries or critical flows covered]

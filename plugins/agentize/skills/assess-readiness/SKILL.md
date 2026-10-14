@@ -23,13 +23,13 @@ This skill runs all 11 criterion checks and produces a structured readiness repo
 For each criterion, read the corresponding skill file and follow its evidence-gathering and scoring instructions. Record the score before moving to the next criterion.
 
 - **C1.1 Codebase Accessibility** — follow the `/agentize:verify-c1-1` skill
-- **C2.1 Setup Automation** — follow the `/agentize:verify-c2-1` skill
-- **C3.1 Architecture Depth** — follow the `/agentize:verify-c3-1` skill
-- **C4.1 Requirements Access** — follow the `/agentize:verify-c4-1` skill
+- **C2.1 DevEnv Setup Automation** — follow the `/agentize:verify-c2-1` skill
+- **C3.1 Documentation Depth** — follow the `/agentize:verify-c3-1` skill
+- **C4.1 Requirements Accessibility** — follow the `/agentize:verify-c4-1` skill
 - **C5.1 Runnability** — follow the `/agentize:verify-c5-1` skill
 - **C5.2 Unit Test Coverage** — follow the `/agentize:verify-c5-2` skill
-- **C5.3 Integration and E2E Coverage** — follow the `/agentize:verify-c5-3` skill
-- **C6.1 Static Analysis** — follow the `/agentize:verify-c6-1` skill
+- **C5.3 Integration and E2E Test Maturity** — follow the `/agentize:verify-c5-3` skill
+- **C6.1 Coding Guidelines** — follow the `/agentize:verify-c6-1` skill
 - **C7.1 Test Isolation** — follow the `/agentize:verify-c7-1` skill
 - **C8.1 CI/CD Automation** — follow the `/agentize:verify-c8-1` skill
 - **C8.2 Observability** — follow the `/agentize:verify-c8-2` skill
@@ -71,20 +71,20 @@ Produce a report in exactly this structure:
 
 ## Result: Level [0/1/2/3] — [Level Name]
 
-Level names: 0 = Uninstrumented, 1 = Foundation, 2 = Guided Autonomy, 3 = Supervised Autonomy
+Level names: 0 = Uninstrumented, 1 = Disconnected, 2 = Connected, 3 = Reflexive
 
 ## Criterion Scores
 
 | Criterion | Name | Score | Max |
 |-----------|------|-------|-----|
 | C1.1 | Codebase Accessibility | [score] | 2 |
-| C2.1 | Setup Automation | [score] | 3 |
-| C3.1 | Architecture Depth | [score] | 3 |
-| C4.1 | Requirements Access | [score] | 3 |
+| C2.1 | DevEnv Setup Automation | [score] | 3 |
+| C3.1 | Documentation Depth | [score] | 3 |
+| C4.1 | Requirements Accessibility | [score] | 3 |
 | C5.1 | Runnability | [score] | 2 |
 | C5.2 | Unit Test Coverage | [score] | 3 |
-| C5.3 | Integration and E2E Coverage | [score] | 3 |
-| C6.1 | Static Analysis | [score] | 3 |
+| C5.3 | Integration and E2E Test Maturity | [score] | 3 |
+| C6.1 | Coding Guidelines | [score] | 3 |
 | C7.1 | Test Isolation | [score or N/A] | 2 |
 | C8.1 | CI/CD Automation | [score] | 3 |
 | C8.2 | Observability | [score] | 3 |

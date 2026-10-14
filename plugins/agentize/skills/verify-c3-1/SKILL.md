@@ -1,6 +1,6 @@
 ---
 name: verify-c3-1
-description: Verify readiness criterion C3.1 (Architecture Depth) in the current project. Reports fulfillment level 0–3.
+description: Verify readiness criterion C3.1 (Documentation Depth) in the current project. Reports fulfillment level 0–3.
 allowed-tools: Bash Read
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Verify C3.1 — Architecture Depth
+# Verify C3.1 — Documentation Depth
 
 ## Criterion Definition
 
@@ -47,6 +47,6 @@ If the project is composed of multiple services, evaluate each service in a sepa
 
 Report in exactly this format:
 
-**C3.1 — Architecture Depth**
+**C3.1 — Documentation Depth**
 - **Level**: [0 / 1 / 2 / 3]
 - **Rationale**: [one or two sentences citing the specific evidence]

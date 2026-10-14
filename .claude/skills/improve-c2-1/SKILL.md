@@ -1,6 +1,6 @@
 ---
 name: improve-c2-1
-description: Improve readiness criterion C2.1 (Setup Automation) in the current project by adding or upgrading setup automation. Raises the fulfillment level by one step.
+description: Improve readiness criterion C2.1 (DevEnv Setup Automation) in the current project by adding or upgrading setup automation. Raises the fulfillment level by one step.
 allowed-tools: Bash Read Write Edit
 ---
 <!--
@@ -10,7 +10,7 @@ See LICENSE.md for details.
 Licensed clients may use and modify this material for internal business purposes.
 -->
 
-# Improve C2.1 — Setup Automation
+# Improve C2.1 — DevEnv Setup Automation
 
 ## Current State
 

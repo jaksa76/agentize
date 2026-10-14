@@ -63,9 +63,9 @@ cp -r agentize/.claude/skills/* /your/project/.claude/skills/
 Once installed, you can invoke the skills directly:
 
 ```
-/assess-adoption
-/verify-adoption-c1-1
-/improve-readiness-c1-1
+/agentize:assess-readiness
+/agentize:verify-c1-1
+/agentize:improve-c1-1
 ```
 
 ## Theory
