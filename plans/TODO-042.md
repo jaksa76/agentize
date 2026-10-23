@@ -57,7 +57,7 @@ Total: 38 skills renamed (19 assess + 19 improve). `assess-readiness`, `assess-a
 ## Steps
 
 1. **Rename directories with `git mv`** (preserves history), one per row of the mapping tables, in both
-   `.claude/skills/` and `plugins/agentize/skills/`. `improve-c1-1` contains `scripts/merge-repos.sh`; the
+   `.claude/skills/` and `plugins/agentize/skills/`. `improve-c1-1` contains `scripts/` (the merge scripts); the
    whole directory moves, so check nothing refers to its old path.
 2. **Update each renamed `SKILL.md`:**
    - frontmatter `name:` to the new name
