@@ -16,7 +16,9 @@ decision the later phases execute, and writes them to <work>/analysis.json and <
   local branches to leave out because they hold no commits that are not on the remote
 - one spelling for branch names that differ only in letter case, and new names for branches that clash
   with a folder of another branch (`a` and `a/b`)
-- the content of each combined branch: which branch every repository contributes (git-flow fallback)
+- for every branch, the trunk it was created from and whether it was already merged (also by squash)
+- the default content of each combined branch (see common.compose; migrate.py's options override it)
+- the branch issues to check before migrating: different bases, partly merged, no common history, ...
 - which branches cleanup removes (merged into develop/master and inactive)
 - how the tags are combined into release tags
 - what needs attention after the migration (submodules, LFS, CI files, long paths, local changes, ...)
@@ -331,7 +333,51 @@ def analyze_repo(info, work):
         out = c.git(['for-each-ref', f'--merged={base_ref}', '--format=%(refname)', 'refs/remote', 'refs/local'],
                     cwd=snap)
         info['merged'].update(out.split())
+    info['squash_detection'] = detect_bases(snap, info)
     return info
+
+
+def detect_bases(snap, info):
+    """Finds, for every branch, the trunk it was created from and whether it was merged back.
+
+    The base is the trunk (develop, production or a release branch) that the fewest of the branch's commits
+    are missing from; on a tie, the one git-flow expects from the branch name. The merge target is production
+    for release/hotfix/support and the base otherwise. A branch is merged when its tip is in the merge target,
+    or (git 2.38+) when merging it there would change nothing: a squash or rebase merge.
+    Returns whether squash merges could be detected.
+    """
+    commits = {b['source_branch']: b['commit'] for b in info['branches'] if not b['name'].startswith('local/')}
+    production, develop = info['production_source'], info['develop_source']
+    releases = sorted(s for s in commits if s.lower().startswith('release/'))
+    squash = c.git_version() >= (2, 38)
+    for b in info['branches']:
+        b['base'] = b['merge_target'] = b['merged'] = None
+        b['ahead'] = 0
+        if b['source_branch'] in (production, develop):
+            if b['name'] != b['source_branch']:
+                b['base'] = b['source_branch']  # local/<trunk>: a diverged copy of the trunk
+            continue
+        expected = production if c.PRODUCTION_CHILD.match(b['source_branch']) else develop or production
+        total, best = count(snap, [b['commit']]), None
+        for trunk in dict.fromkeys([expected, develop, production] + releases):
+            if not trunk or trunk == b['source_branch']:
+                continue
+            ahead = count(snap, [b['commit'], '--not', commits[trunk]])
+            if ahead < total and (best is None or ahead < best[1]):
+                best = (trunk, ahead)
+        if not best:
+            continue  # no history in common with any trunk
+        b['base'], b['ahead'] = best
+        target = production if c.LONG_LIVED.match(b['source_branch']) else b['base']
+        b['merge_target'] = target
+        if c.git_ok(['merge-base', '--is-ancestor', b['commit'], commits[target]], cwd=snap)[0] == 0:
+            b['merged'] = 'ancestor'
+        elif squash:
+            rc, out, _ = c.git_ok(['merge-tree', '--write-tree', commits[target], b['commit']], cwd=snap)
+            target_tree = c.git(['rev-parse', commits[target] + '^{tree}'], cwd=snap).strip()
+            if rc == 0 and out.split() and out.split()[0] == target_tree:
+                b['merged'] = 'squash'
+    return squash
 
 
 # ---------------------------------------------------------------------------
@@ -388,6 +434,10 @@ def combine(repos):
 
     for r in repos:
         by_source = {b['source_branch']: b['target'] for b in r['branches'] if not b['name'].startswith('local/')}
+        for b in r['branches']:
+            b['base'] = by_source[b['base']] if b['base'] else None
+            b['merge_target'] = by_source[b['merge_target']] if b['merge_target'] else None
+            b['in_trunk'] = b['ref'] in r['merged']
         r['targets'] = sorted(b['target'] for b in r['branches'])
         r['default_target'] = by_source[r['default']]
         r['production'] = by_source[r['production_source']]
@@ -400,30 +450,69 @@ def combine(repos):
 
     defaults = Counter(r['default_target'] for r in repos)
     default_branch = sorted(defaults.items(), key=lambda kv: (-kv[1], kv[0] not in c.PRODUCTION_BRANCHES, kv[0]))[0][0]
+    # The default composition; migrate.py recomputes it with its command-line options.
+    _, branches = c.compose({'repos': repos, 'combined': {'default_branch': default_branch}})
+    return default_branch, branches, renames
 
+
+def branch_issues(repos, branches):
+    """Flags the combined branches that are more than the same branch of several repositories."""
+    production = c.most_common(r['production'] for r in repos)
+    develop = c.most_common(r['develop'] for r in repos) or c.DEVELOP_BRANCH
+    trunks = {r[k] for r in repos for k in ('production', 'develop', 'default_target') if r[k]}
     owners = defaultdict(dict)
     for r in repos:
         for b in r['branches']:
             owners[b['target']][r['name']] = b
-    protected_names = {default_branch} | {r['default_target'] for r in repos}
-    by_repo = {r['name']: r for r in repos}
-    branches = []
-    for name in sorted(owners, key=str.lower):
-        composition = {r['name']: c.fallback_branch(r, name) for r in repos}
-        protected = (name in protected_names or name.lower() in c.PRODUCTION_BRANCHES + (c.DEVELOP_BRANCH,)
-                     or bool(c.LONG_LIVED.match(name)))
-        # Removed in cleanup when every repository that has it merged it and stopped using it.
-        prune, why = False, ''
-        if not protected:
-            own = owners[name]
-            prune = all(b['origin'] == 'remote' and b['ref'] in by_repo[rn]['merged']
-                        and name not in by_repo[rn]['recent'] for rn, b in own.items())
-            if prune:
-                last = max(b['date'] for b in own.values())
-                why = f'merged into develop or the production branch; inactive since {c.day(last)}'
-        branches.append({'name': name, 'owners': sorted(owners[name]), 'composition': composition,
-                         'protected': protected, 'prune': prune, 'prune_reason': why})
-    return default_branch, branches, renames
+    actions = defaultdict(list)
+    for b in branches:
+        for n in b['notes']:
+            actions[(b['split_from'] or b['name'], n['kind'])].append(n['text'])
+    issues = []
+
+    def add(kind, name, names, detail, override, decided_by, otherwise):
+        done = [text for k in decided_by for text in actions[(name, k)]]
+        issues.append({'kind': kind, 'branch': name, 'repos': sorted(names), 'detail': detail,
+                       'default': '; '.join(dict.fromkeys(done)) or otherwise, 'override': override})
+
+    for name, own in sorted(owners.items(), key=lambda kv: kv[0].lower()):
+        if name in trunks:
+            continue
+        bases = defaultdict(list)
+        for rn, b in own.items():
+            bases[b['base']].append(rn)
+        if len(bases) > 1:
+            add('different bases', name, own,
+                '; '.join(f"{', '.join(v)} from {k or 'no trunk'}" for k, v in bases.items()),
+                f'`--combine {name}` keeps one branch', ('split', 'override'), 'combined as one branch')
+        expected = c.expected_base(name, production, develop)
+        odd = [rn for rn, b in own.items() if b['base'] in (production, develop) and b['base'] != expected]
+        if odd and expected in (production, develop):
+            add('unexpected base', name, odd,
+                f"created from {own[odd[0]]['base']}; git-flow creates this kind of branch from {expected}",
+                f"`--fallback '{name}=<kind>'` for what the other repositories contribute", ('split',),
+                f"repositories without it contribute their {own[odd[0]]['base']}")
+        if None in bases:
+            add('no common history', name, bases[None],
+                'shares no history with develop, the production branch or a release branch',
+                f"`--fallback '{name}=develop'` to include the other repositories", ('excluded', 'override'),
+                'the other repositories contribute their develop')
+        merged = {rn: b for rn, b in own.items() if b['merged']}
+        how = ', '.join(f"{rn} into {b['merge_target']}{' (squash/rebase)' if b['merged'] == 'squash' else ''}"
+                        for rn, b in merged.items())
+        if merged and len(merged) < len(own):
+            add('partly merged', name, own, f"already merged: {how}; still open in "
+                f"{', '.join(rn for rn in own if rn not in merged)}", '`--merged-content tip`', ('merged',),
+                'each repository contributes its own branch tip')
+        elif any(b['merged'] == 'squash' for b in merged.values()):
+            add('squash-merged', name, merged, f"merged by squash or rebase: {how}. Its commits are not in the "
+                'target\'s history', '-', (), 'combined as is; cleanup keeps the branch')
+        dates = sorted((b['date'], rn) for rn, b in own.items())
+        if len(dates) > 1 and dates[-1][0] - dates[0][0] > c.RECENT_DAYS * 86400:
+            add('possibly unrelated', name, own, f"last commits from {c.day(dates[0][0])} ({dates[0][1]}) to "
+                f"{c.day(dates[-1][0])} ({dates[-1][1]}): the same name may have been reused for different work",
+                f'`--split {name}:<repo>`', ('split',), 'combined as is')
+    return issues
 
 
 def tag_key(name):
@@ -556,9 +645,26 @@ def render(state):
               f"**{len(comb['tags']['per_repo'])}**.",
               f'- A branch is recent when its last commit is at most {c.RECENT_DAYS} days older than the newest '
               f'branch of its repository; the {c.MIN_RECENT_BRANCHES} newest branches always count as recent.',
-              '- A repository without a combined branch contributes, git-flow style: its production branch '
-              '(master/main) for master, main, hotfix/* and support/*; its develop branch (or its default branch '
-              'without develop) for everything else.']
+              '- A repository without a combined branch contributes the trunk the branch was created from in the '
+              'repositories that have it (develop, master/main or a release branch); its production branch for '
+              'release/*, hotfix/* and support/*, which end up there; nothing when the branch shares no history with '
+              'any trunk.',
+              '- A repository that already merged the branch, while others still work on theirs, contributes the '
+              'branch it merged into; its own branch stays in the history.',
+              '- When the repositories created a branch from different trunks, the minority moves to '
+              '`<repo>/<branch>`.']
+    split = [b for b in br if b['split_from']]
+    if split:
+        names = ', '.join('`' + b['name'] + '`' for b in split[:10]) + (', ...' if len(split) > 10 else '')
+        lines += [f'- Branches split off: **{len(split)}** ({names}).']
+    if comb['issues']:
+        lines += ['', '## Branch issues', '',
+                  'Check each one (see the skill) and decide whether the default is right; the override is the '
+                  '`migrate.py` option that changes it.', '',
+                  '| Branch | Issue | Repositories | Detail | Default in migration | Override |',
+                  '|---|---|---|---|---|---|']
+        lines += [f"| `{i['branch']}` | {i['kind']} | {', '.join(i['repos'])} | {i['detail']} | {i['default']} | "
+                  f"{i['override']} |" for i in comb['issues']]
     notes = [(r['name'], b) for r in repos for b in r['branches'] if b['note']]
     if notes:
         lines += ['', '### Local and remote branches that differ', '', '| Repository | Branch | Decision |', '|---|---|---|']
@@ -618,6 +724,7 @@ def main():
         c.die('No source repository has any branch.')
 
     default_branch, branches, renames = combine(repos)
+    issues = branch_issues(repos, branches)
     combined_tags, per_repo_tags = plan_combined_tags(repos, work)
     tag_names = {t['final'] for t in combined_tags} | {t['final'] for t in per_repo_tags}
     ambiguous = sorted({b['name'] for b in branches} & tag_names)
@@ -627,8 +734,17 @@ def main():
     state = {'created': c.now_iso(), 'work': work, 'recent_days': c.RECENT_DAYS, 'excluded': excluded,
              'repos': repos,
              'combined': {'default_branch': default_branch, 'branches': branches, 'renames': renames,
+                          'issues': issues,
                           'tags': {'combined': combined_tags, 'per_repo': per_repo_tags}, 'ambiguous': ambiguous}}
     state['warnings'] = collect_warnings(repos) + [f'**{n}**: has no branches and is left out.' for n in excluded]
+    if issues:
+        kinds = Counter(i['kind'] for i in issues)
+        state['warnings'].append(f"{len(issues)} branch issue(s): "
+                                 f"{', '.join(f'{n} {k}' for k, n in kinds.most_common())}. See **Branch issues**; "
+                                 'each was migrated with the default shown there unless the migration options say otherwise.')
+    if not all(r['squash_detection'] for r in repos):
+        state['warnings'].append(f'git {".".join(map(str, c.git_version()))} cannot detect squash and rebase merges '
+                                 '(needs 2.38+): such branches count as not merged.')
     c.save_json(os.path.join(work, 'analysis.json'), state)
     c.write_text(os.path.join(work, 'analysis.md'), render(state))
     errors = [r['name'] for r in repos if r.get('shallow_snapshot')]

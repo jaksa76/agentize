@@ -14,6 +14,7 @@ All phases keep their state in one work directory:
     <work>/*.md               one summary per phase; report.py joins them into migration-report.md
 """
 import datetime
+import fnmatch
 import json
 import os
 import re
@@ -258,13 +259,177 @@ def resolve_dir_file(names, suffix):
     return renamed
 
 
-def fallback_branch(repo, branch):
-    """The branch of `repo` that a combined branch it does not have should contain (git-flow)."""
-    if branch in repo['targets']:
-        return branch
-    lower = branch.lower()
-    if lower in PRODUCTION_BRANCHES or PRODUCTION_CHILD.match(branch):
+# ---------------------------------------------------------------------------
+# Combined branches
+# ---------------------------------------------------------------------------
+
+# What a repository that doesn't have a combined branch contributes to it.
+FALLBACK_KINDS = ('base', 'develop', 'production', 'default', 'none')
+
+
+def default_options():
+    """The migration's defaults; migrate.py's command-line options override them."""
+    return {'mixed_bases': 'split', 'split': [], 'combine': [], 'merged_content': 'target', 'fallbacks': [],
+            'contribute': [], 'default_branch': None}
+
+
+def _source_for(repo, kind, base):
+    """The branch of `repo` that a fallback of this kind means, or None."""
+    if kind == 'none':
+        return None
+    if kind == 'production':
+        return repo['production']
+    if kind == 'develop':
+        return repo['develop'] or repo['production']
+    if kind == 'default':
+        return repo['default_target']
+    if base is None:
+        return repo['develop'] or repo['default_target']
+    if base.lower() == DEVELOP_BRANCH:
+        return repo['develop'] or repo['production']
+    return base if base in repo['targets'] else repo['production']
+
+
+def _trunk_source(repo, name):
+    """What a repository contributes to a trunk branch (production, develop, a default branch) it lacks."""
+    lower = name.lower()
+    if lower in PRODUCTION_BRANCHES:
         return repo['production']
     if lower == DEVELOP_BRANCH:
         return repo['develop'] or repo['production']
     return repo['develop'] or repo['default_target']
+
+
+def _fallback(repo, name, base, trunk, options):
+    for pattern, kind in options['fallbacks']:
+        if fnmatch.fnmatchcase(name.lower(), pattern.lower()):
+            return _source_for(repo, kind, base)
+    if trunk:
+        return _trunk_source(repo, name)
+    # A release, hotfix or support branch ends up in production, so the others contribute production.
+    if LONG_LIVED.match(name):
+        return repo['production']
+    # A branch with no history in common with any trunk (gh-pages, an imported project) stands alone.
+    return _source_for(repo, 'base', base) if base else None
+
+
+def note(kind, text):
+    """A decision about a combined branch that differs from simply combining it."""
+    return {'kind': kind, 'text': text}
+
+
+def most_common(values):
+    found = Counter(v for v in values if v)
+    return sorted(found.items(), key=lambda kv: (-kv[1], kv[0]))[0][0] if found else None
+
+
+def expected_base(name, production, develop):
+    """The trunk git-flow creates a branch of this name from."""
+    return production if PRODUCTION_CHILD.match(name) else develop or production
+
+
+def compose(plan, options=None):
+    """Decides every combined branch: its name and which branch each repository contributes.
+
+    Repositories that have the branch contribute it, except that a repository which already merged it
+    contributes the branch it was merged into while other repositories still work on theirs. When the
+    repositories created the branch from different trunks, those that differ from the majority get their own
+    branch, `<repo>/<branch>`. Repositories that don't have the branch contribute the trunk it was created
+    from (production for release/hotfix/support), or nothing when it shares no history with any trunk.
+    `options` (see default_options) override these rules. Returns (default_branch, branches).
+    """
+    o = dict(default_options(), **(options or {}))
+    repos = plan['repos']
+    by_repo = {r['name']: r for r in repos}
+    owners = defaultdict(dict)
+    for r in repos:
+        for b in r['branches']:
+            owners[b['target']][r['name']] = b
+    production = most_common(r['production'] for r in repos)
+    develop = most_common(r['develop'] for r in repos) or DEVELOP_BRANCH
+    trunks = {r[k] for r in repos for k in ('production', 'develop', 'default_target') if r[k]}
+    protected_names = {plan['combined']['default_branch']} | {r['default_target'] for r in repos}
+    taken = {n.lower() for n in owners}
+    folders = {'/'.join(n.lower().split('/')[:i]) for n in owners for i in range(1, n.count('/') + 1)}
+    split_one = defaultdict(set)
+    for item in o['split']:
+        name, _, repo = item.partition(':')
+        split_one[name].add(repo)
+
+    def build(name, origin, members, base, notes):
+        trunk = origin in trunks or origin.lower() in PRODUCTION_BRANCHES + (DEVELOP_BRANCH,)
+        active = [rn for rn, b in members.items() if not b.get('merged')]
+        composition = {}
+        for r in repos:
+            rn, b = r['name'], members.get(r['name'])
+            if b and b.get('merged') and active and o['merged_content'] == 'target':
+                parents = [b['merge_target']] + ([b['target']] if b['merged'] == 'squash' else [])
+                composition[rn] = {'content': b['merge_target'], 'parents': parents, 'role': 'merged'}
+                how = 'squash/rebase-merged' if b['merged'] == 'squash' else 'merged'
+                notes.append(note('merged', f"{rn} already {how} it into {b['merge_target']}, so {rn}/ holds "
+                                            f"{b['merge_target']}; its own branch stays in the history"))
+            elif b:
+                composition[rn] = {'content': b['target'], 'parents': [b['target']], 'role': 'own'}
+            else:
+                src = _fallback(r, origin, base, trunk, o)
+                composition[rn] = {'content': src, 'parents': [src] if src else [],
+                                   'role': 'fallback' if src else 'none'}
+        for item in o['contribute']:
+            if item['branch'] == name:
+                src = item['source']
+                composition[item['repo']] = {'content': src, 'parents': [src] if src else [], 'role': 'override'}
+                notes.append(note('override', f"{item['repo']} contributes {src or 'nothing'} (command-line option)"))
+        excluded = [rn for rn, x in composition.items() if x['role'] == 'none']
+        if excluded:
+            notes.append(note('excluded', f"shares no history with any trunk, so {', '.join(excluded)} "
+                                          f"{'is' if len(excluded) == 1 else 'are'} left out of it"))
+        protected = (origin in protected_names or origin.lower() in PRODUCTION_BRANCHES + (DEVELOP_BRANCH,)
+                     or bool(LONG_LIVED.match(origin)))
+        # Removed in cleanup when every repository that has it merged it and stopped using it.
+        prune = not protected and all(b['origin'] == 'remote' and b.get('in_trunk')
+                                      and origin not in by_repo[rn]['recent'] for rn, b in members.items())
+        why = (f"merged into develop or the production branch; inactive since "
+               f"{day(max(b['date'] for b in members.values()))}" if prune else '')
+        return {'name': name, 'split_from': origin if name != origin else None, 'owners': sorted(members),
+                'base': base, 'composition': composition, 'notes': notes, 'protected': protected,
+                'prune': prune, 'prune_reason': why}
+
+    branches = []
+    for name in sorted(owners, key=str.lower):
+        own = owners[name]
+        groups = defaultdict(dict)
+        for rn, b in own.items():
+            groups[b.get('base')][rn] = b
+        expected = expected_base(name, production, develop)
+        main = sorted(groups, key=lambda k: (-len(groups[k]), k != expected,
+                                             -max(b['date'] for b in groups[k].values())))[0]
+        moved = {rn for rn in split_one.get(name, ()) if rn in own}
+        if len(groups) > 1 and name not in o['combine'] and (o['mixed_bases'] == 'split' or name in o['split']):
+            moved |= {rn for k, members in groups.items() if k != main for rn in members}
+        # `<repo>/<branch>` must not be, contain or sit inside another branch name.
+        clash = [f'{rn}/{name}' for rn in moved
+                 if f'{rn}/{name}'.lower() in taken | folders
+                 or any('/'.join(f'{rn}/{name}'.lower().split('/')[:i]) in taken
+                        for i in range(1, name.count('/') + 2))]
+        notes = []
+        if clash:
+            notes.append(note('split', f"not split: {', '.join(clash)} clashes with another branch name"))
+            moved = set()
+        stay = {rn: b for rn, b in own.items() if rn not in moved}
+        if moved and not stay:
+            stay, moved = own, set()
+        for rn in sorted(moved):
+            b = own[rn]
+            why = (f"{rn} created it from {b.get('base') or 'no trunk'}, the others from {main or 'no trunk'}"
+                   if b.get('base') != main else f'{rn} is kept apart (command-line option)')
+            notes.append(note('split', f'{why}: moved to {rn}/{name}'))
+        branches.append(build(name, name, stay, main, notes))
+        for rn in sorted(moved):
+            b = own[rn]
+            branches.append(build(f'{rn}/{name}', name, {rn: b}, b.get('base'),
+                                  [note('split-off', f"{rn}'s branch, split from {name}")]))
+    names = {b['name'] for b in branches}
+    default_branch = o['default_branch'] or plan['combined']['default_branch']
+    if default_branch not in names:
+        raise ValueError(f"default branch '{default_branch}' is not one of the combined branches")
+    return default_branch, branches

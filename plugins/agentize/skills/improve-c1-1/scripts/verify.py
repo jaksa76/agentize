@@ -159,7 +159,7 @@ def main():
 
     # 1. Branches
     t = time.time()
-    planned = {b['name'] for b in plan['combined']['branches'] if not b['prune']}
+    planned = {name for name, b in mig['branches'].items() if not b['prune']}
     pruned = {p['name'] for p in cln['pruned']}
     problems = [f'missing branch {b}' for b in sorted(planned - set(heads))]
     problems += [f'unexpected branch {b}' for b in sorted(set(heads) - planned)]
@@ -174,17 +174,20 @@ def main():
     out = c.git(['rev-list', '--no-walk', '--parents', '--stdin'], cwd=output,
                 input='\n'.join(heads[b] for b in remaining) + '\n')
     parents = {line.split()[0]: line.split()[1:] for line in out.splitlines()}
-    by_name = {b['name']: b for b in plan['combined']['branches']}
     for b in remaining:
         tip = heads[b]
         expected_parents = []
         for name in names:
-            target = by_name[b]['composition'][name]
-            src = source_commit[(name, target)]
-            expected_parents.append(maps[name].get(src))
+            part = mig['branches'][b]['composition'][name]
+            expected_parents += [maps[name].get(source_commit[(name, p)]) for p in part['parents']]
             pairs += 1
+            if not part['content']:
+                if folder(tip, name):
+                    problems.append(f'{b}: {name}/ should not be there')
+                continue
+            src = source_commit[(name, part['content'])]
             if empty_or(folder(tip, name)) != empty_or(source_tree(name, src)):
-                problems.append(f"{b}: {name}/ differs from {name}'s '{target}'")
+                problems.append(f"{b}: {name}/ differs from {name}'s '{part['content']}'")
         if parents.get(tip) != expected_parents:
             problems.append(f'{b}: parents are not the rewritten source branches')
     check('Structure', problems, f'{pairs} repository folders in {len(remaining)} branches match their source tree',
@@ -194,19 +197,22 @@ def main():
     t = time.time()
     contents = Contents(out_cat, oid_len)
     problems, selected = [], []
+    # Where each repository's own branch ended up (a split branch lives at <repo>/<branch>).
+    placement = mig['placement']
     for name in names:
         for target in repos[name]['recent']:
-            if target in heads:
+            if placement.get(name, {}).get(target) in heads:
                 selected.append((name, target))
     for name, target in selected:
         src = source_commit[(name, target)]
-        src_tree, out_tree = source_tree(name, src), folder(heads[target], name)
+        branch = placement[name][target]
+        src_tree, out_tree = source_tree(name, src), folder(heads[branch], name)
         if empty_or(src_tree) == 'empty' or not out_tree:
             if empty_or(src_tree) != empty_or(out_tree):
-                problems.append(f'{target}:{name}/ is missing')
+                problems.append(f'{branch}:{name}/ is missing')
             continue
         found = []
-        contents.tree(snaps[name], src_tree, out_tree, f'{target}:{name}', found)
+        contents.tree(snaps[name], src_tree, out_tree, f'{branch}:{name}', found)
         problems += found
     check('Content', problems,
           f'{len(selected)} recent repository branches: {contents.blobs} files ({contents.bytes / 2**20:.0f} MiB) and '

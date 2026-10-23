@@ -96,11 +96,10 @@ def main():
     c.log(f'Kept {len(per_repo)} tags under their repository name')
 
     pruned, deletes = [], []
-    for b in plan['combined']['branches']:
+    for name, b in mig['branches'].items():
         if b['prune']:
-            tip = mig['branches'][b['name']]['tip']
-            deletes.append(f"delete refs/heads/{b['name']} {tip}\n")
-            pruned.append({'name': b['name'], 'tip': tip, 'owners': b['owners'], 'reason': b['prune_reason']})
+            deletes.append(f"delete refs/heads/{name} {b['tip']}\n")
+            pruned.append({'name': name, 'tip': b['tip'], 'owners': b['owners'], 'reason': b['prune_reason']})
     out = c.git(['for-each-ref', '--format=%(refname)', 'refs/sources', 'refs/imported-tags'], cwd=output)
     deletes += [f'delete {ref}\n' for ref in out.split()]
     c.git(['update-ref', '--stdin'], cwd=output, input=''.join(deletes))
@@ -113,7 +112,7 @@ def main():
     state = {'created': c.now_iso(), 'combined_tags': combined, 'per_repo_tags': per_repo, 'pruned': pruned,
              'seconds': round(time.time() - started)}
     c.save_json(os.path.join(work, 'cleanup.json'), state)
-    remaining = len(plan['combined']['branches']) - len(pruned)
+    remaining = len(mig['branches']) - len(pruned)
     lines = ['# Cleanup', '',
              f'- **{len(combined)} release tags** combine the same tag across repositories '
              f'({sum(t["filled"] for t in combined)} repository snapshots taken from the production branch at the '

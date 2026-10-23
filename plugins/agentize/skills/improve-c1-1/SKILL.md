@@ -36,7 +36,7 @@ Decide these yourself:
   you cannot tell which repositories belong to the project.
 - **Output.** A new folder next to the workspace, `<project>-monorepo`, which must not exist yet. The work
   folder (snapshots, plan, logs, report) is `<output>.migration`.
-- **Tools.** git 2.29 or newer (2.45+ recommended), Python 3.8+, and git-filter-repo. If
+- **Tools.** git 2.29 or newer (2.38+ to detect squash merges, 2.45+ recommended), Python 3.8+, and git-filter-repo. If
   `python -c "import git_filter_repo"` fails, install it with `python -m pip install --user git-filter-repo`.
   The scripts run it as a Python module, so it doesn't need to be on PATH.
 
@@ -60,17 +60,53 @@ submodules, Git LFS, paths too long for Windows, file names Windows can't check 
 assume they are at the repository root, and repositories sharing history. These go into the report; they
 don't stop the migration. A shallow snapshot does stop it: fetch the full history and run the analysis again.
 
+### Check the branch issues
+
+The **Branch issues** table lists the combined branches that are more than the same branch of several
+repositories, with what the migration does by default and the option that changes it. The script can't tell
+intent from history alone, so look at each one yourself in the snapshots (`<work>/snapshot/<repo>.git`; a
+branch is `refs/remote/<branch>`, or `refs/local/<branch>` when only the local clone has it). For example,
+`git -C <snapshot> log --date=short --format='%ad %an %s' <base>..refs/remote/<branch>` shows a branch's own
+commits.
+
+| Issue | What to look at | When to change the default |
+|---|---|---|
+| different bases | The commits of the repositories in the minority: are they the same work as the others (same ticket, same topic), or a fix meant for production that was named like a feature? | Same work, and merging it into develop is fine (master reaches develop anyway): `--combine <branch>`. Otherwise keep the split. |
+| unexpected base | Whether the branch is really what its name says, e.g. a hotfix named `feature/...`. | The default follows the real base; change what the other repositories contribute with `--fallback` only if the base itself was detected wrongly. |
+| partly merged | That the merged repository's work is really in its target (`git log <target> --grep <ticket>`, or the files). | Keep the default unless the team still needs the old, unmerged state of that folder: `--merged-content tip`. |
+| no common history | What the branch holds: gh-pages, documentation, an imported project. | If the other repositories belong in it after all: `--fallback '<branch>=develop'`. |
+| possibly unrelated | The commit subjects and ticket numbers on each repository's branch. | Different work under a reused name: `--split <branch>:<repo>` for each repository whose work differs from the most recent one. |
+| squash-merged | Nothing; for information. | - |
+
+Also look into anything else in the analysis that looks wrong, such as a guessed default branch or an
+unexpected strategy, and correct it before migrating (for example `--default-branch`).
+
 ## Phase 2 — Migration
 
 ```bash
-python scripts/migrate.py --work <work> --output <output>
+python scripts/migrate.py --work <work> --output <output> [options]
 ```
 
 Each repository's history is rewritten with git filter-repo so its files live under `<name>/`, in parallel.
 Author, committer, dates and messages are kept; commit hashes change, and filter-repo updates hashes quoted in
 commit messages. Every branch name then becomes one combined branch: a commit whose tree holds every
-repository's folder and whose parents are the branch each repository contributes. The default branch is
+repository's folder and whose parents are the branches each repository contributes. The default branch is
 checked out.
+
+Without options the migration follows the defaults shown in the analysis. Pass options only for what your
+check of the branch issues showed to be wrong; each one is recorded in the report:
+
+| Option | Effect |
+|---|---|
+| `--combine BRANCH` | Keep a branch together although its repositories created it from different trunks. |
+| `--mixed-bases combine` | The same for every branch (the default is `split`). |
+| `--split BRANCH:REPO` | Move one repository's branch to `<repo>/<branch>` (a reused name). `--split BRANCH` splits by trunk. |
+| `--merged-content tip` | A repository that already merged a branch others still work on contributes its old branch tip instead of its target branch. |
+| `--fallback PATTERN=KIND` | What repositories without a matching branch contribute: `base`, `develop`, `production`, `default` or `none`. PATTERN is a glob such as `release/*`. |
+| `--contribute BRANCH:REPO=SRC` | One repository, which doesn't have BRANCH, contributes its branch SRC (or `none`). |
+| `--default-branch NAME` | The mono-repo's default branch. |
+
+`python scripts/migrate.py --help` describes them in full.
 
 ## Phase 3 — Cleanup
 
@@ -117,7 +153,8 @@ python scripts/report.py --work <work>
 
 Writes `<work>/migration-report.md`: a summary (output, sources, history, branches, tags, verification), the
 changes made without asking, what needs attention, the next steps, and each phase's details. Read it and add to
-**Needs attention** anything you noticed that the scripts didn't record.
+**Needs attention** anything you noticed that the scripts didn't record, and, for each migration option you
+passed, what you found in the branch issues that made you choose it.
 
 Then tell the user: where the mono-repo is, where the report is, the verification result, the changes made
 without asking (counts), and the items that need attention. Don't push the mono-repo anywhere; that is the
@@ -135,10 +172,19 @@ user's decision.
   Windows, macOS and Azure Repos can't hold both spellings. The production branches become one: a repository
   on `main` joins the others' `master`, or the other way round. A branch that is also a folder of other branch
   names (`feature` next to `feature/x`) is renamed `feature-branch`.
-- **Combined branches.** A repository that doesn't have a branch contributes the branch it would have been
-  created from (git-flow): its production branch for `master`, `main`, `hotfix/*` and `support/*`; its `develop`
-  (or, without develop, its default branch) for everything else. The default branch of the mono-repo is the
-  most common default branch.
+- **Bases.** For every branch the analysis finds the trunk it was created from (develop, the production
+  branch or a release branch: the one the fewest of its commits are missing from; on a tie, the one git-flow
+  expects from its name), and whether it was already merged into its target (production for `release/*`,
+  `hotfix/*` and `support/*`, the base otherwise), also by squash or rebase.
+- **Combined branches.** These defaults can be changed with migrate's options:
+  - When repositories created a branch from different trunks, the minority moves to `<repo>/<branch>`.
+  - A repository that already merged a branch, while others still work on theirs, contributes the branch it
+    merged into; its old tip stays in the history as an extra parent.
+  - A repository that doesn't have a branch contributes the branch's base: its production branch for
+    `master`, `main`, `release/*`, `hotfix/*` and `support/*` (merging them into production then changes
+    nothing in that folder); its `develop` (or, without develop, its production branch) for branches created
+    from develop; nothing for a branch that shares no history with any trunk.
+  - The default branch of the mono-repo is the most common default branch.
 - **Pruning.** A branch is deleted in cleanup when every repository that has it merged it into develop or
   production and none of them used it recently (see "Recent branches"). Production, develop, the default
   branches, `release/*`, `hotfix/*`, `support/*` and branches with unpushed commits are never deleted. Their

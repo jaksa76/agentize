@@ -43,7 +43,10 @@ def main():
     repos, comb = plan['repos'], plan['combined']
 
     commits = sum(r['commits'] for r in repos)
-    branches = len(comb['branches'])
+    branches = len(mig['branches'])
+    split = sum(1 for b in mig['branches'].values() if b['split_from'])
+    merged = sum(1 for b in mig['branches'].values() for x in b['composition'].values() if x['role'] == 'merged')
+    left_out = sum(1 for b in mig['branches'].values() for x in b['composition'].values() if x['role'] == 'none')
     pruned = len(cln['pruned'])
     dropped = sum(len(r['dropped']) for r in repos)
     local_used = [(r['name'], b) for r in repos for b in r['branches'] if b['origin'] == 'local']
@@ -71,6 +74,13 @@ def main():
              f"- **{plural(len(behind), 'out-of-date local branch', 'out-of-date local branches')}** replaced by the newer remote "
              f"branch; **{plural(len(local_used), 'local branch', 'local branches')}** migrated"
              f' because they hold unpushed commits.',
+             f"- **{plural(split, 'branch', 'branches')} split off** as `<repo>/<branch>`: the repository created it "
+             'from a different trunk than the others, or the name was reused for different work.',
+             f"- **{plural(merged, 'repository folder')}** in combined branches hold the branch the repository "
+             'already merged into, because other repositories still work on that branch; '
+             f"**{plural(left_out, 'repository folder')}** left out of branches that share no history with them.",
+             '- Migration options: ' + (', '.join(f'`{x}`' for x in mig['changed_options'])
+                                        if mig['changed_options'] else 'the defaults') + '.',
              f"- **{plural(pruned, 'branch', 'branches')} deleted**:"
              f' merged into develop/master and inactive.',
              f"- **{len(cln['combined_tags'])} release tags** created from the same tag across repositories; "
