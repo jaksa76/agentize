@@ -22,8 +22,11 @@ is at its maximum level (2) and stop.
 The migration creates a **new** repository. It never changes the source repositories or their checkouts, and
 it pushes nothing. Adapting the build and the CI pipelines to the mono-repo is a later, separate step.
 
-**Run every phase without asking the user.** Each decision follows a fixed rule (below) and is recorded in the
-report; the user reviews the report and corrects anything afterwards. Stop only when a phase fails.
+**Run every phase without asking the user.** Most decisions follow fixed rules (below). Two need judgement,
+and you (the agent) make them yourself: the **branch issues** after the analysis, which decide the migration
+options, and the **cleanup plan**, which you review and edit before applying it. Every decision, and the
+reason for each one you changed, is recorded in the report; the user reviews the report and corrects anything
+afterwards. Stop only when a phase fails.
 
 ## Before you start
 
@@ -110,12 +113,45 @@ check of the branch issues showed to be wrong; each one is recorded in the repor
 
 ## Phase 3 — Cleanup
 
+Cleanup turns the sources' tags into the mono-repo's tags and deletes branches nobody needs. It runs in two
+steps, with your own review in between (not the user's), because the right result depends on how the project released and worked.
+
+**1. Propose.**
+
 ```bash
-python scripts/cleanup.py --work <work>
+python scripts/cleanup.py --work <work> --plan
 ```
 
-Creates the release tags, keeps single-repository tags as `<repo>/<tag>`, deletes the merged and inactive
-branches, removes the helper refs (`refs/sources/`, `refs/imported-tags/`) and runs `git gc`.
+Writes `<work>/cleanup-plan.json` (the plan) and `<work>/cleanup-plan.md` (the same, for reading), following
+the rules below: release tags, tags kept as `<repo>/<tag>`, branches to delete. Its **To review** section
+lists what the rules may have got wrong.
+
+**2. Review.** Read `cleanup-plan.md` together with the analysis and the migration summary, check the flagged
+items in the snapshots, and edit `cleanup-plan.json` where the proposal is wrong. Give each change a `note`
+saying why; the notes go into the report.
+
+| Flag | What to look at | Typical change |
+|---|---|---|
+| release tag: dates far apart | The tags' dates, messages and the commits they point at. Different releases that happen to share a number? | Remove the release tag and list its tags under `repo_tags` as `<repo>/<tag>`. |
+| release tag: spelled differently | Whether the spellings follow the same versioning. | Rename the release tag (`name`) to the project's usual spelling. |
+| repository tag: close to other repositories' tags | A release train numbered per repository (`2024.03` in one, `v5.2` in another): release notes, CHANGELOGs, CI release pipelines, tag messages. | Move the tags into one release tag (`members`), named the way the project names its releases. |
+| branch: could be deleted | Whether the team still needs it: recent commits, an environment branch (`staging`, `qa`), an open pull request on the old remote. | Add it to `delete_branches` with a reason, or leave it. |
+
+Also use what you know about the project. For example, delete the `<repo>/<branch>` copies of a split branch
+whose work is merged elsewhere, keep a branch the README calls a deployment branch, or name release tags after
+the product's release scheme. The plan's format is described in `python scripts/cleanup.py --help`.
+
+**3. Apply.**
+
+```bash
+python scripts/cleanup.py --work <work> --apply
+```
+
+Checks the plan first: every source tag used exactly once, valid and unique tag names, existing branches,
+and that deleting the branches loses no commit of the sources (only the combining commits). If anything is
+wrong it changes nothing and lists the problems; fix the plan and apply again. Otherwise it creates the tags,
+deletes the branches and the helper refs (`refs/sources/`, `refs/imported-tags/`) in one transaction and runs
+`git gc`. What the review changed compared with the proposal goes into the report.
 
 ## Phase 4 — Verification
 
@@ -127,9 +163,9 @@ Compares the mono-repo with the untouched snapshots, and exits 1 if any check fa
 
 | Check | What it proves |
 |---|---|
-| Branches | every planned branch exists, the pruned ones are gone, tips unchanged since migration |
+| Branches | every migrated branch exists unless cleanup deleted it, tips unchanged since migration |
 | Structure | for every branch and repository, `<repo>/` is exactly the source branch's tree, and the parents are the rewritten source commits |
-| Content | for the **recent branches** of every repository, every file's bytes, mode and name equal the source, read from both object stores |
+| Content | for the **recent branches** of every repository, every file's bytes, mode and name equal the source, read from both object stores; a branch that is no branch's folder (already merged by its repository, or deleted in cleanup) is checked through its rewritten commit in the history |
 | History | for the same branches, the same commits: authors, committers, dates, parents and subjects |
 | Commits | every source commit is reachable in the mono-repo |
 | Tags | every source tag is covered and its folder matches the tagged source tree |
@@ -175,7 +211,9 @@ user's decision.
 - **Bases.** For every branch the analysis finds the trunk it was created from (develop, the production
   branch or a release branch: the one the fewest of its commits are missing from; on a tie, the one git-flow
   expects from its name), and whether it was already merged into its target (production for `release/*`,
-  `hotfix/*` and `support/*`, the base otherwise), also by squash or rebase.
+  `hotfix/*` and `support/*`, the base otherwise), also by squash or rebase. A branch that is already
+  contained in a trunk only shows where it was merged, not where it was created (a release merged into master
+  but never back into develop), so its base is the trunk git-flow expects from its name.
 - **Combined branches.** These defaults can be changed with migrate's options:
   - When repositories created a branch from different trunks, the minority moves to `<repo>/<branch>`.
   - A repository that already merged a branch, while others still work on theirs, contributes the branch it
@@ -185,19 +223,23 @@ user's decision.
     nothing in that folder); its `develop` (or, without develop, its production branch) for branches created
     from develop; nothing for a branch that shares no history with any trunk.
   - The default branch of the mono-repo is the most common default branch.
-- **Pruning.** A branch is deleted in cleanup when every repository that has it merged it into develop or
-  production and none of them used it recently (see "Recent branches"). Production, develop, the default
-  branches, `release/*`, `hotfix/*`, `support/*` and branches with unpushed commits are never deleted. Their
-  commits stay in the history; the report lists each deleted branch's tip.
-- **Tags.** Tags are grouped by name, ignoring letter case and a version prefix (`v1.2.0`, `1.2.0`,
-  `release-1.2.0` are the same release). Dates are not used: lightweight tags carry the tagged commit's date,
-  not the release date. A group found in two or more repositories becomes one annotated release tag, using the
-  most common spelling, on a commit holding every repository at that release: the tagged commit where it has
-  the tag, otherwise its production branch as of the release date (a repository that didn't exist yet is left
-  out). A tag found in one repository only is kept as `<repo>/<tag>`.
+- **Pruning (proposed).** Cleanup proposes deleting a branch when every repository that has it merged it into
+  develop or production and none of them used it recently (see "Recent branches"). Production, develop, the
+  default branches, `release/*`, `hotfix/*`, `support/*` and branches with unpushed commits are never proposed.
+  The review may delete more, but never a branch whose commits are on no other branch or tag; the report lists
+  each deleted branch's tip.
+- **Tags (proposed).** Tags are grouped by name, ignoring letter case and a version prefix (`v1.2.0`, `1.2.0`,
+  `release-1.2.0` are the same release). Dates don't decide the grouping, because lightweight tags carry the
+  tagged commit's date, not the release date; they only flag groups for review. A group found in two or more
+  repositories becomes one annotated release tag, using the most common spelling, on a commit holding every
+  repository at that release: the tagged commit where it has the tag, otherwise its production branch as of the
+  release date (a repository that didn't exist yet is left out). A tag found in one repository only is kept as
+  `<repo>/<tag>`. The review can regroup and rename them.
 
 ## Re-running
 
 The analysis can run again at any time; it reuses the snapshots and fetches only what changed. The migration
 always needs a new, empty output folder. Each phase reads the previous phases' files in the work folder, so after
-a fix you can rerun from the phase that needs it.
+a fix you can rerun from the phase that needs it. `cleanup.py --plan` overwrites the plan, including your edits;
+after a successful `--apply` the cleanup can't run again on the same mono-repo, so a different cleanup means
+migrating again.

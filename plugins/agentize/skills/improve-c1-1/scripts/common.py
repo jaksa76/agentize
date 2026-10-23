@@ -9,7 +9,9 @@ All phases keep their state in one work directory:
     <work>/snapshot/<r>.git   untouched copy of each source repository (the reference for verification)
     <work>/commit-maps/<r>    source commit -> rewritten commit, written by git filter-repo
     <work>/migration.json     what migrate.py built
-    <work>/cleanup.json       what cleanup.py changed
+    <work>/cleanup-plan.json  the cleanup proposed by cleanup.py --plan, edited in review
+                              (cleanup-plan.proposed.json: as proposed; cleanup-plan.applied.json: as applied)
+    <work>/cleanup.json       what cleanup.py --apply changed
     <work>/verification.json  what verify.py checked
     <work>/*.md               one summary per phase; report.py joins them into migration-report.md
 """
@@ -18,6 +20,8 @@ import fnmatch
 import json
 import os
 import re
+import shutil
+import stat
 import subprocess
 import sys
 import threading
@@ -33,6 +37,8 @@ DEVELOP_BRANCH = 'develop'
 PRODUCTION_CHILD = re.compile(r'^(hotfix|support)/', re.I)
 # Long-lived branch kinds that cleanup never removes.
 LONG_LIVED = re.compile(r'^(release|hotfix|support)/', re.I)
+# A release tag: an optional prefix (`v`, `release-`, ...) and a version number.
+VERSION_TAG = re.compile(r'^(?:v|version[-_]?|release[-_/]?|rel[-_]?)?(\d+(?:\.\d+)*(?:[-+._].*)?)$', re.I)
 # Paths longer than this (inside the monorepo) are likely to hit Windows' 260-character limit.
 LONG_PATH = 200
 
@@ -146,6 +152,18 @@ def parse_tree(data, oid_len):
         entries.append((data[i:sp], data[sp + 1:nul], data[nul + 1:nul + 1 + oid_len].hex()))
         i = nul + 1 + oid_len
     return entries
+
+
+def rmtree(path):
+    """Deletes a folder, including git's read-only object files on Windows."""
+    def writable(func, p, _):
+        os.chmod(p, stat.S_IWRITE)
+        func(p)
+    if os.path.exists(path):
+        if sys.version_info >= (3, 12):
+            shutil.rmtree(path, onexc=writable)
+        else:
+            shutil.rmtree(path, onerror=writable)
 
 
 def load_json(path):

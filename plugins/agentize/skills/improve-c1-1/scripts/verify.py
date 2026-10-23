@@ -9,17 +9,20 @@ Usage:
 
 Checks (each PASS or FAIL; the script exits 1 if any fails):
 
-1. Branches      every planned branch exists, the pruned ones are gone, tips unchanged since migration.
+1. Branches      every migrated branch exists unless cleanup deleted it, tips unchanged since migration.
 2. Structure     for every branch and every repository, the <repo>/ folder has exactly the source branch's
                  tree, and the branch's parents are the rewritten source commits.
 3. Content       for the recent branches of every repository (production, develop, and the branches used
                  in the last 90 days, at least five per repository): every file's bytes, mode and name
                  compared with the source, read from both object stores. A pair of folders that was
-                 already compared (unchanged between branches) is not compared again.
+                 already compared (unchanged between branches) is not compared again. A branch that is no
+                 branch's folder (merged by its repository, or deleted in cleanup) is checked through its
+                 rewritten commit, which must be reachable from a branch or tag.
 4. History       for the same branches: the same number of commits, with the same authors, committers,
                  dates, parents and subjects (hashes quoted in subjects are ignored, as they were rewritten).
 5. Commits       every source commit is reachable in the monorepo (the counts add up).
-6. Tags          every source tag is in the monorepo and its folder matches the tagged source tree.
+6. Tags          every source tag is in the monorepo (as a release or a repository tag) and its folder
+                 matches the tagged source tree.
 7. Working tree  the default branch is checked out and `git status` is clean on this machine.
 """
 import argparse
@@ -159,8 +162,8 @@ def main():
 
     # 1. Branches
     t = time.time()
-    planned = {name for name, b in mig['branches'].items() if not b['prune']}
     pruned = {p['name'] for p in cln['pruned']}
+    planned = set(mig['branches']) - pruned
     problems = [f'missing branch {b}' for b in sorted(planned - set(heads))]
     problems += [f'unexpected branch {b}' for b in sorted(set(heads) - planned)]
     problems += [f'{b}: tip changed since migration' for b in sorted(planned & set(heads))
@@ -197,31 +200,48 @@ def main():
     t = time.time()
     contents = Contents(out_cat, oid_len)
     problems, selected = [], []
-    # Where each repository's own branch ended up (a split branch lives at <repo>/<branch>).
+    # Where each repository's own branch ended up (a split branch lives at <repo>/<branch>). A branch that is
+    # no branch's folder (its repository already merged it, so the folder holds the merge target, or cleanup
+    # deleted it) is checked through its own rewritten commit, which the history keeps.
     placement = mig['placement']
+    in_history = []
     for name in names:
         for target in repos[name]['recent']:
-            if placement.get(name, {}).get(target) in heads:
-                selected.append((name, target))
-    for name, target in selected:
+            branch = placement.get(name, {}).get(target)
+            if branch in heads:
+                selected.append((name, target, heads[branch], f'{branch}:{name}'))
+            else:
+                commit = maps[name].get(source_commit[(name, target)])
+                selected.append((name, target, commit, f"{name}'s {target} (commit {(commit or '?')[:10]})"))
+                in_history.append(commit)
+    if in_history:
+        if None in in_history:
+            problems.append('a recent branch was not rewritten')
+        unreachable = int(c.git(['rev-list', '--count', '--stdin'], cwd=output, input='\n'.join(
+            [x for x in in_history if x] + ['--not', '--branches', '--tags']) + '\n').strip())
+        if unreachable:
+            problems.append(f'{unreachable} commit(s) of recent branches are on no branch or tag')
+    for name, target, commit, label in selected:
         src = source_commit[(name, target)]
-        branch = placement[name][target]
-        src_tree, out_tree = source_tree(name, src), folder(heads[branch], name)
+        src_tree, out_tree = source_tree(name, src), folder(commit, name) if commit else None
         if empty_or(src_tree) == 'empty' or not out_tree:
             if empty_or(src_tree) != empty_or(out_tree):
-                problems.append(f'{branch}:{name}/ is missing')
+                problems.append(f'{label}/ is missing')
             continue
         found = []
-        contents.tree(snaps[name], src_tree, out_tree, f'{branch}:{name}', found)
+        contents.tree(snaps[name], src_tree, out_tree, label, found)
         problems += found
+    via = f' ({len(in_history)} of them through their commit in the history: merged elsewhere or deleted)' \
+        if in_history else ''
     check('Content', problems,
-          f'{len(selected)} recent repository branches: {contents.blobs} files ({contents.bytes / 2**20:.0f} MiB) and '
-          f'{contents.trees} folders compared; {contents.reused} unchanged folders reused', time.time() - t)
+          f'{len(selected)} recent repository branches{via}: {contents.blobs} files '
+          f'({contents.bytes / 2**20:.0f} MiB) and {contents.trees} folders compared; '
+          f'{contents.reused} unchanged folders reused', time.time() - t)
 
     t = time.time()
     problems, commits_checked = [], 0
     for name in names:
-        sources = sorted({source_commit[(n, tg)] for n, tg in selected if n == name})
+        sources = sorted({source_commit[(n, tg)] for n, tg, _, _ in selected if n == name})
         if not sources:
             continue
         before = history(os.path.join(work, 'snapshot', name + '.git'), sources)
@@ -250,27 +270,33 @@ def main():
 
     # 6. Tags
     t = time.time()
-    problems, checked = [], 0
-    for tag in plan['combined']['tags']['combined']:
-        commit = tags.get(tag['final'])
+    problems, checked, covered = [], 0, set()
+    # The source tags are looked up in the analysis, not taken from what cleanup recorded.
+    tag_commit = {(r['name'], t['name']): t['commit'] for r in plan['repos'] for t in r['tags']}
+    for tag in cln['combined_tags']:
+        commit = tags.get(tag['name'])
+        covered |= {(rn, m['tag']) for rn, m in tag['members'].items()}
         if not commit:
-            problems.append(f"missing tag {tag['final']}")
+            problems.append(f"missing tag {tag['name']}")
             continue
         for name in names:
-            src = (tag['members'].get(name) or tag['fill'].get(name) or {}).get('commit')
+            member, fill = tag['members'].get(name), tag['fill'].get(name)
+            src = tag_commit.get((name, member['tag'])) if member else fill['source'] if fill else None
             checked += 1
             if src and empty_or(folder(commit, name)) != empty_or(source_tree(name, src)):
-                problems.append(f"{tag['final']}: {name}/ differs from the source")
+                problems.append(f"{tag['name']}: {name}/ differs from the source")
             if not src and folder(commit, name):
-                problems.append(f"{tag['final']}: {name}/ should not be there")
-    for tag in plan['combined']['tags']['per_repo']:
-        commit = tags.get(tag['final'])
+                problems.append(f"{tag['name']}: {name}/ should not be there")
+    for tag in cln['per_repo_tags']:
+        commit = tags.get(tag['name'])
+        covered.add((tag['repo'], tag['tag']))
         checked += 1
-        src = repos[tag['repo']]['tags'][tag['tag_index']]['commit']
+        src = tag_commit.get((tag['repo'], tag['tag']))
         if not commit:
-            problems.append(f"missing tag {tag['final']}")
+            problems.append(f"missing tag {tag['name']}")
         elif empty_or(folder(commit, tag['repo'])) != empty_or(source_tree(tag['repo'], src)):
-            problems.append(f"{tag['final']}: differs from the source tag")
+            problems.append(f"{tag['name']}: differs from the source tag")
+    problems += [f'source tag {rn}:{t} is not in the monorepo' for rn, t in sorted(set(tag_commit) - covered)]
     total_src = sum(len(r['tags']) for r in plan['repos'])
     check('Tags', problems, f'all {total_src} source tags covered ({len(tags)} tags in the monorepo, '
           f'{checked} folders compared)', time.time() - t)

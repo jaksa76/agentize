@@ -35,7 +35,6 @@ import argparse
 import fnmatch
 import os
 import shutil
-import stat
 import subprocess
 import sys
 import time
@@ -110,24 +109,12 @@ def changed_options(o):
     return out
 
 
-def rmtree(path):
-    """Deletes a folder, including git's read-only object files on Windows."""
-    def writable(func, p, _):
-        os.chmod(p, stat.S_IWRITE)
-        func(p)
-    if os.path.exists(path):
-        if sys.version_info >= (3, 12):
-            shutil.rmtree(path, onexc=writable)
-        else:
-            shutil.rmtree(path, onerror=writable)
-
-
 def rewrite(repo, work):
     """Rewrites one repository under <name>/; branches become refs/heads/b<i>, tags refs/tags/t<i>."""
     name = repo['name']
     snap = os.path.join(work, 'snapshot', name + '.git')
     dest = os.path.join(work, 'rewrite', name + '.git')
-    rmtree(dest)
+    c.rmtree(dest)
     c.git(['init', '--bare', '-q', dest])
     # Neutral ref names: the real names may differ only in case, which this files-backed repo can't hold.
     refspecs = [f"+{b['ref']}:refs/heads/b{i}" for i, b in enumerate(repo['branches'])]
@@ -238,7 +225,7 @@ def main():
     c.git(['symbolic-ref', 'HEAD', f'refs/heads/{default}'], cwd=output)
     c.git(['reset', '-q', '--hard'], cwd=output)
     if not args.keep_rewrites:
-        rmtree(os.path.join(work, 'rewrite'))
+        c.rmtree(os.path.join(work, 'rewrite'))
 
     counts = {}
     for name in names:

@@ -81,10 +81,12 @@ def main():
              f"**{plural(left_out, 'repository folder')}** left out of branches that share no history with them.",
              '- Migration options: ' + (', '.join(f'`{x}`' for x in mig['changed_options'])
                                         if mig['changed_options'] else 'the defaults') + '.',
-             f"- **{plural(pruned, 'branch', 'branches')} deleted**:"
-             f' merged into develop/master and inactive.',
-             f"- **{len(cln['combined_tags'])} release tags** created from the same tag across repositories; "
+             f"- **{plural(pruned, 'branch', 'branches')} deleted**: their commits are all on other branches "
+             '(merged and inactive, or chosen in the cleanup review).',
+             f"- **{len(cln['combined_tags'])} release tags** created from the same release across repositories; "
              'repositories without that tag are included at their production branch as of the release date.',
+             '- Cleanup review: ' + ('; '.join(cln['review_changes']) if cln.get('review_changes')
+                                     else 'the proposed plan was applied unchanged') + '.',
              '', '## Needs attention', '']
     attention = list(plan['warnings'])
     if ver and not ver['ok']:

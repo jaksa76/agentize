@@ -27,6 +27,7 @@ import argparse
 import os
 import re
 import sys
+import tempfile
 import time
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -40,7 +41,6 @@ CI_FILE = re.compile(r'^(azure-pipelines[^/]*\.ya?ml|\.azure-pipelines/.*|\.azur
                      r'|\.gitlab-ci\.yml|Jenkinsfile[^/]*|bitbucket-pipelines\.yml|\.circleci/.*)$'
                      r'|(^|/)[^/]*pipelines?[^/]*\.ya?ml$', re.I)
 HOOK_FILE = re.compile(r'^(\.husky/|\.githooks/|\.pre-commit-config\.yaml$|lefthook\.ya?ml$)', re.I)
-VERSION_TAG = re.compile(r'^(?:v|version[-_]?|release[-_/]?|rel[-_]?)?(\d+(?:\.\d+)*(?:[-+._].*)?)$', re.I)
 
 
 def parse_args():
@@ -341,7 +341,9 @@ def detect_bases(snap, info):
     """Finds, for every branch, the trunk it was created from and whether it was merged back.
 
     The base is the trunk (develop, production or a release branch) that the fewest of the branch's commits
-    are missing from; on a tie, the one git-flow expects from the branch name. The merge target is production
+    are missing from; on a tie, the one git-flow expects from the branch name. A branch already contained in a
+    trunk (merged) gets the expected trunk instead, since containment shows where it was merged, not where it
+    was created. The merge target is production
     for release/hotfix/support and the base otherwise. A branch is merged when its tip is in the merge target,
     or (git 2.38+) when merging it there would change nothing: a squash or rebase merge.
     Returns whether squash merges could be detected.
@@ -350,6 +352,19 @@ def detect_bases(snap, info):
     production, develop = info['production_source'], info['develop_source']
     releases = sorted(s for s in commits if s.lower().startswith('release/'))
     squash = c.git_version() >= (2, 38)
+    # merge-tree writes the trees it merges; send them to a throwaway object folder, reading the snapshot's
+    # objects as an alternate, so the snapshot stays untouched.
+    scratch = tempfile.mkdtemp(prefix='merge-tree-')
+    merge_env = {'GIT_OBJECT_DIRECTORY': scratch,
+                 'GIT_ALTERNATE_OBJECT_DIRECTORIES': os.path.join(os.path.abspath(snap), 'objects')}
+    try:
+        _detect(snap, info, commits, production, develop, releases, squash, merge_env)
+    finally:
+        c.rmtree(scratch)
+    return squash
+
+
+def _detect(snap, info, commits, production, develop, releases, squash, merge_env):
     for b in info['branches']:
         b['base'] = b['merge_target'] = b['merged'] = None
         b['ahead'] = 0
@@ -358,26 +373,31 @@ def detect_bases(snap, info):
                 b['base'] = b['source_branch']  # local/<trunk>: a diverged copy of the trunk
             continue
         expected = production if c.PRODUCTION_CHILD.match(b['source_branch']) else develop or production
-        total, best = count(snap, [b['commit']]), None
+        total, best, aheads = count(snap, [b['commit']]), None, {}
         for trunk in dict.fromkeys([expected, develop, production] + releases):
             if not trunk or trunk == b['source_branch']:
                 continue
-            ahead = count(snap, [b['commit'], '--not', commits[trunk]])
+            ahead = aheads[trunk] = count(snap, [b['commit'], '--not', commits[trunk]])
             if ahead < total and (best is None or ahead < best[1]):
                 best = (trunk, ahead)
         if not best:
             continue  # no history in common with any trunk
+        # A branch with no commits outside some trunk was merged there: that says where it ended up, not where
+        # it started (a release merged into master but never back into develop). Its base is then the trunk
+        # git-flow expects from its name, as long as it shares history with it.
+        if best[1] == 0 and best[0] != expected and aheads.get(expected, total) < total:
+            best = (expected, aheads[expected])
         b['base'], b['ahead'] = best
         target = production if c.LONG_LIVED.match(b['source_branch']) else b['base']
         b['merge_target'] = target
         if c.git_ok(['merge-base', '--is-ancestor', b['commit'], commits[target]], cwd=snap)[0] == 0:
             b['merged'] = 'ancestor'
         elif squash:
-            rc, out, _ = c.git_ok(['merge-tree', '--write-tree', commits[target], b['commit']], cwd=snap)
+            rc, out, _ = c.git_ok(['merge-tree', '--write-tree', commits[target], b['commit']], cwd=snap,
+                                  env=merge_env)
             target_tree = c.git(['rev-parse', commits[target] + '^{tree}'], cwd=snap).strip()
             if rc == 0 and out.split() and out.split()[0] == target_tree:
                 b['merged'] = 'squash'
-    return squash
 
 
 # ---------------------------------------------------------------------------
@@ -516,7 +536,7 @@ def branch_issues(repos, branches):
 
 
 def tag_key(name):
-    m = VERSION_TAG.match(name.strip())
+    m = c.VERSION_TAG.match(name.strip())
     return (m.group(1) if m else name).lower()
 
 
