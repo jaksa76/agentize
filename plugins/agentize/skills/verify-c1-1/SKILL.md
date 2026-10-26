@@ -60,6 +60,7 @@ Scoring guide:
 - A repository containing multiple internal packages/folders (for example `utils/`, `shared/`, `docs/`) is **not automatically Level 2**.
 - If another repo must be checked out/cloned/copied for implementing a user story end to end, treat as split codebase and score **Level 0** unless a formal technical linking mechanism justifies **Level 1**.
 - If sibling repos depend on this repo for code needed in their build/deploy/runtime/test flows, this repo is not independently sufficient for end-to-end story delivery; prefer **Level 0** unless formal technical linking justifies **Level 1**.
+- A mono-repo whose folders still consume each other's code through published packages (an internal library pinned at a released version instead of built from its folder) is **Level 2**, but say so in the rationale: a library change isn't built and tested with its consumers, so the level holds on paper more than in practice.
 - In rationale, cite concrete file-level evidence (for example workflow file and step name) when cross-repo coupling is detected.
 
 Report in exactly this format:

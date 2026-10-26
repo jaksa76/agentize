@@ -39,7 +39,7 @@ WINDOWS_RESERVED = re.compile(r'^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$', r
 WINDOWS_BAD_CHARS = re.compile(r'[<>:"|?*\\]')
 CI_FILE = re.compile(r'^(azure-pipelines[^/]*\.ya?ml|\.azure-pipelines/.*|\.azuredevops/.*|\.github/workflows/.*'
                      r'|\.gitlab-ci\.yml|Jenkinsfile[^/]*|bitbucket-pipelines\.yml|\.circleci/.*)$'
-                     r'|(^|/)[^/]*pipelines?[^/]*\.ya?ml$', re.I)
+                     r'|(^|/)[^/]*pipe?lines?[^/]*\.ya?ml$', re.I)
 HOOK_FILE = re.compile(r'^(\.husky/|\.githooks/|\.pre-commit-config\.yaml$|lefthook\.ya?ml$)', re.I)
 
 
